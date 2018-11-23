@@ -1,0 +1,368 @@
+\documentclass[11pt]{article}
+%\usepackage[version=3]{mhchem} % Package for chemical equation typesetting
+%\usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
+%\usepackage{graphicx} % Required for the inclusion of images
+%\usepackage{natbib} % Required to change bibliography style to APA
+\usepackage{amsmath} % Required for some math elements 
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenx}
+\usepackage{float}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{makeidx}
+\usepackage{hyperref}
+\usepackage{braket}
+%\usepackage[latin1]{inputenc}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage{hyphenat}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{picture}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{wrapfig}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+	language=C++,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
+
+\theoremstyle{theorem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+
+
+%\usepackage{tikz}
+%\usetikzlibrary{graphs}
+%\usepackage{pgfplots}
+%\pgfplotsset{compat=newest}
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+\renewcommand{\figurename}{Grafico}
+\renewcommand{\tablename}{Tabella}
+\newcommand{\at}[2][]{#1\Big|_{#2}}
+\renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
+
+%\usepackage{times} % Uncomment to use the Times New Roman font
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{C1 - Assignment 3 Report: Scalar initial value problems.} % Title
+
+\author{Student Number: 1894945} % Author name
+
+\date{\today} % Date for the report
+
+\begin{document}
+
+\maketitle % Insert the title, author and date
+
+\begin{center}
+C1 - Assignment 3 Report \hfill
+Student Number: 1894945
+\vspace{3pt} \hrule \vspace{3pt} \hrule
+\end{center}
+
+%\clearpage
+\tableofcontents
+
+\clearpage
+% If you wish to include an abstract, uncomment the lines below
+%\begin{abstract}
+
+
+%\end{abstract}
+%\clearpage 
+
+\section{Introduction}
+
+\subsection{Initial value problem}
+
+
+\section{The program}
+\subsection{Implementation}
+The program is built on the class ADR , which stands for Advection-Diffusion-Reaction. The class has 7 private variables: $J$ (the number of points in the interior of $[0,L]$), $\alpha$, $\beta$, $\gamma$ (the parameters associated to the ADR equation at hand), $L$ (the length of the interval), $u_0$ (the boundary condition at $0$) and $u_L$ (boundary condition at $L$). In this way, once the constructor is called, all the variables and parameters defining problem \eqref{eqn:ass-prob} are set.\\
+As pointed out in $\S$\ref{subsec:the-present-case}, BVPs can be solved through numerical methods for linear algebra: the member function \emph{MatrixBuild}, which accepts no argument, constructs matrix $A$ of Eqn.\eqref{eqn:matrix-form}, which will be later inverted through the Gauss-Seidel algorithm. Such a construction takes place within the function \emph{Solver}, that performs the tests required by the assignment instructions through the Gauss-Seidel method and outputs the results on different .txt files. For clarity reasons,  each time a simulation is performed, a suitable success message containing the different parameters of the corresponding test, is printed on the terminal. \emph{Solver} is a member function which accepts 4 arguments and implicitly returns the discretised solution \emph{u$\_$x}. The argument \emph{itCheck} represents the number of iterations after which a check for stagnation of the method is performed, while \emph{MaxIter} represents the maximum number of iterations the user is willing ``wait" and \emph{tol} the given tolerance.\\ 
+The member function \emph{An$\_$sol} outputs the analytical solutions at each point of $\Omega_h$, by simply computing either Eqn.\eqref{eqn:AD-sol} or Eqn.\eqref{eqn:DR-sol} at the given set of points. The choice between the two solutions is made by means of an \emph{if} instruction, checking if $\alpha\neq 0, \gamma=0$ or if $\alpha\neq 0, \beta=0$. The special case $\alpha\neq 0, \beta=0, \gamma=0$ is checked as well. If none of the above conditions is satisfied, the program exits with an appropriate error message to the user.\\
+Discretised and the analytical solutions are finally compared within the function \emph{ADR$\_$Test}. Such a function takes as arguments the values of the private variables, the arguments of $Solver$ and the different values of $J$ the user wants to test on. The function loops over them and prints the final error between the numerical solution and the analytical one, in the (discrete) $L_\infty$ norm, on suitable .txt files, whose names are defined through the parameters the user has set for the test. The logarithm of the ratio between errors obtained for different mesh sizes is computed and printed, too.\\
+Since, by means of simply changing the values provided in the main file, both class of equations can be tested with no further modifications to the code, the program can be regarded as particularly flexible.\\
+
+\subsection{Running the program}
+The program is run through the Makefile provided. The current optimisation is set to -Ofast and all following tests have been performed with this optimisation choice. Every possible error or warning has been explicitly checked by means of the instruction \emph{-Wall -Wfatal-errors -pedantic} before proceeding to performing the different tests: no warnings appeared.\\
+The program generates a fixed number of output files, in which the results of the tests have been stored. Some of these files are used to produce plots by means of six different plotscripts.\\ 
+
+\subsection{Testing correctness}
+In order to check the correctness of the implementation of the code, the tests requested by the assignment have been performed. The class of ADR equations chosen as a benchmark is the following:
+
+\begin{equation}
+	\label{eqn:AD}
+	-\alpha u''(x)+\beta u'(x) = 0
+\end{equation}
+
+Nonetheless, the correctness of the code for the other class of equations is easy to verify by means of changing the parameters in the main file. Such a test, whose results will not be reported here, has been successfully performed in the construction of the code.\\
+The solution to Eqn.\eqref{eqn:AD} has been discussed in detail in $\S$\ref{subsubsec:ADprob}. However, from the numerical point of view, it is important to point out how BCs imply suitable modifications of the vector $\mathbf{f}$ to invert against. In fact, if the matrix $A$ is constructed to possess $J$ columns and $J$ rows, since the discrete Laplacian and gradient operators take as arguments $x_{j+1}$ and $x_{j-1}$ for the approximation at $x_j$, the values of the function $u(x)$ at the boundary of $\Omega_h$ have to be inserted into the first and last entry of the vector $\mathbf{f}$. Such a construction is performed in the function \emph{Solver} trough the following lines:
+
+\begin{lstlisting}
+f[0] = u0_*( ( alpha_/(h*h) ) + ( beta_/(2*h) ) ); //first boundary condition
+f[J_-1] = uL_*( ( alpha_/(h*h) ) - ( beta_/(2*h) ) ); //second boundary condition
+\end{lstlisting}
+
+
+Eqn.(\ref{eqn:matrix-form}) then reads:
+
+\begin{align*}
+\hspace{-30pt}
+	\begin{pmatrix}
+	\frac{2\alpha}{h^2}+\gamma & -\frac{\alpha}{h^2}-\frac{\beta}{2h} & 0 & 0 & 0 & \cdots & 0 & 0\\
+	-\frac{\alpha}{h^2}+\frac{\beta}{2h} & \frac{2\alpha}{h^2}+\gamma & -\frac{\alpha}{h^2}-\frac{\beta}{2h} & 0 & 0 & \cdots & 0 & 0\\
+	0 & -\frac{\alpha}{h^2}+\frac{\beta}{2h} & \frac{2\alpha}{h^2}+\gamma & -\frac{\alpha}{h^2}-\frac{\beta}{2h} & 0 & \cdots & 0 & 0\\
+	\vdots & \vdots & \ddots & \ddots & \ddots & \cdots & \vdots & \vdots \\
+	0 & 0 & \cdots & \cdots & \cdots & \cdots &  \frac{2\alpha}{h^2}+\gamma & -\frac{\alpha}{h^2}-\frac{\beta}{2h}\\
+	\end{pmatrix}
+	\begin{pmatrix}
+	u_1\\
+	\vdots\\
+	\\
+	\vdots\\
+	u_{J-1}\\		
+	\end{pmatrix}
+	=
+	\begin{pmatrix}
+	u_0\left(-\frac{\alpha}{h^2}+\frac{\beta}{2h}\right)\\
+	0\\
+	\vdots\\
+	0\\
+	u_{L}\left(-\frac{\alpha}{h^2}-\frac{\beta}{2h}\right)\\		
+	\end{pmatrix}
+\end{align*}
+
+where $\mathbf{u}$ is the initial guess required by the Gauss-Seidel algorithm to work. In the present case, each component of $\mathbf{u}$ has been set to $0$, so that $u_j=0\hspace{3mm}\forall j\in\lbrace 1,\cdots, J\rbrace$.\\
+Solutions to  Eqn.\eqref{eqn:AD} have been obtained for different values of the mesh size $h=\frac{1}{J+1}$ and different values of the $\mathbb{P}_e$. The error, i.e the distance between the exact solution on the grid and the approximate one in the (discrete) $L_\infty$ norm, is computed for each solution. As previously mentioned, the logarithm of the ratio between such errors for two successive solutions of the same problem (same $\mathbb{P}_e$, but different $h$) have been computed: the reason for this will be presented in $\S$\ref{subsec:Error}.\\
+
+
+
+
+\subsection{Results of the tests}
+In the following, the results of the more significant tests performed will be reported and briefly discussed. The tolerance has been set to $10^{-6}$ for each of the tests, while the values of \emph{itCheck} and \emph{MaxIter} are kept fixed to $10^4$ and $10^9$ respectively.\\
+
+\subsubsection{Solutions to the AD equation}
+The \emph{ADR$\_$test} function has been shown to work correctly for the following  P\'{e}clet numbers:
+$$\mathbb{P}_e=\lbrace 0.0000, 0.0005, 0.0100, 1.0000, 10.5000 \rbrace$$
+The solutions $u\_x$ obtained for the different cases, indexed by the respective $J$, can be found in the files $P\_numb\_...\_Solution\_J\_....txt$ , where the dots stand for the different possible values of $\mathbb{P}_e$ and $J$. The residual error at every iteration, in the $L_\infty$ norm, is stored in the files $P\_numb\_...\_Residual\_J\_....txt$, which provide a direct proof of the general correctness of the code.\\
+Finally, the distance between the exact solution and the approximate one, in the (discrete) $L_\infty$ is printed on \emph{Errors$\_$P$\_$numb$\_$...txt} files. Unsurprisingly, the error becomes smaller as the mesh size decreases.\\
+The correctness of the algorithm has been tested for different values of $h$, as required by the assignment. The values of the mesh size have been chosen to be:
+\begin{align}
+	\label{eqn:h-choice}
+	h=\lbrace10, 20, 40, 80, 160, 320, 640\rbrace
+\end{align}
+
+Keeping the P\'{e}clet number fixed, solutions have been obtained for all the previous mesh sizes.\\ 
+
+
+\subsubsection{Small P\'{e}clet numbers}
+Solutions to to Eqn.\eqref{eqn:AD} have been studied in the case of small $\mathbb{P}_e$, as required by the assignment. The obtained results are reported in the following plots.
+
+
+The solutions appear to be straight lines on the interval $[0, 1]$. Remembering what has been discussed in $\S$\ref{subsubsec:ADprob}, such a result does not appear surprising: Fig.\ref{fig:P_0.0005} and Fig.\ref{fig:P_0.01} are in good agreement with the Taylor expansion performed in Eqn.\eqref{key:AD-smallP}. Finally, Fig.\ref{fig:P_0} shows that the code is able to find the correct solution to the problem also in the case of $\beta=0$. In fact, under these circumstances, Eqn.\eqref{eqn:AD} simplifies to:
+
+$$-\alpha u''(x)=0$$
+
+which, for the given BCs, admits the unique solution $u(x)=x$.\\
+
+\subsubsection{P\'{e}clet number close or equal to 1}
+Solutions to Eqn.\eqref{eqn:AD} have been studied in the case $\alpha=0.25, \beta=0.5$ as well. Such a choice of the parameters results in $\mathbb{P}_e=1$. The result is reported in the following plot.
+
+The exponential behaviour of the solution is now evident. In fact, in the present case, the Taylor expansion of the exponential function around 0 cannot be truncated after the first term being that $\frac{\beta}{\alpha}=1$.\\
+Solutions overlap in this case as well, but small differences between them are noticeable for big enough $ j $: by means of a suitable zoom on the plot, it is possible to see that the red and blue curve present a slightly different profile.\\
+Fig.\ref{fig:P_1} indirectly provides a proof of the correctness of the analysis performed in $\S$\ref{subsubsec:ADprob}. Not only in the present situation it is not possible to perform an expansion about $0$ of the exponential, but also it is not possible to use the approximation performed for large $\mathbb{P}_e$, as confirmed by the absence of boundary layers in the plot.\\
+
+\subsubsection{Large P\'{e}clet number}
+Finally, solutions to Eqn.\eqref{eqn:AD} have been studied in the case of large $\mathbb{P}_e$. The results are reported in the following plot.
+
+
+
+The presence of a wide boundary layer is noticeable: all solutions stay equal to naught for $0\le x < 0.8$ and then reach $1$.\\
+
+The choice of the values of $\alpha$ and $\beta$ has been made through the following criterion.\\
+A sufficient condition for the Gauss-Seidel method to converge is that the matrix $A$ which the algorithm has to invert is strictly diagonally dominant (see \cite{numerical-math}). In the present case, such a condition is satisfied if:
+
+$$\left\|\frac{2\alpha}{h^2}\right\|> \left\|\frac{\alpha}{h^2}+\frac{\beta}{2h}\right\| + \left\|-\frac{\alpha}{h^2}+\frac{\beta}{2h}\right\|$$
+
+However:
+
+$$\left\|\frac{\beta}{h}\right\|= \left\|-\frac{\alpha}{h^2}+\frac{\beta}{2h}+\frac{\alpha}{h^2}+\frac{\beta}{2h}\right\|$$
+
+So that, in order to have strict diagonally dominance, it must be:
+
+$$\left\|\frac{\beta}{h}\right\|<\left\|\frac{2\alpha}{h^2}\right\|$$
+
+Hence, for $L=1$, remembering that $h=\frac{1}{J+1}$, one has that a sufficient condition for the Gauss-Seidel method to converge is:
+
+$$J>\mathbb{P}_e-1$$
+
+The choice of $\alpha=1.0$ and $\beta=21.0$ satisfy the above condition. It was explicitly checked during the construction of the program that the choice of a great $\beta$ (e.g. $\beta=1000$) does not allow the algorithm to converge and the program exits with an appropriate warning to the user. Clearly, large values of $\beta$ can be tested with $J$ large enough to make the previous inequality satisfied.\\
+
+\subsection{Error analysis and order of convergence}
+\label{subsec:Error}
+As required by the assignment, solutions errors have been computed and analysed. Not surprisingly, the distance between analytical and the approximate solution becomes smaller when the mesh size decreases. The study of such errors becomes of great importance to determine the order of convergence of the method. Assume the FD method here used is convergent of order p, then:
+
+$$\left\|\frac{r_hu-u}{r_{\frac{h}{2}}u-u}\right\|_{\bar{\mathbb{U}}_h}=\frac{Ch^p+\mathcal{O}(h^{p+1})}{C\left(\frac{h}{2}\right)^p+\mathcal{O}(h^{p+1})}= 2^p+\mathcal{O}(h)$$
+
+Passing to the logarithms:
+
+\begin{align}
+	\label{eqn:log-conv}
+	\log_2\left\|\frac{r_hu-u}{r_{\frac{h}{2}}u-u}\right\|_{\bar{\mathbb{U}}_h}=p+\mathcal{O}(h)
+\end{align}
+
+The order of convergence of a method can thus be evaluated by means of studying the behaviour of the distance in the $\bar{\mathbb{U}}_h$ norm between the discretised and the exact solution to a given problem.\\
+The choice of progressively reducing by a factor 2 the values of $h$ (see Eqn.\eqref{eqn:h-choice}) should now appear clear: such a choice guarantees that the data are uniformly distributed on a logarithmic scale, which, in turn, makes the analysis of the errors simpler.\\
+As already mentioned, in the present case the (discrete) $L_{\infty}$ (see \cite{lec-notes}) norm has been chosen.\\
+
+
+Fig.\ref{fig:errors} shows a clear dependence of the error empirical profiles on the P\'{e}clet number. In particular, it is apparent that when $\mathbb{P}_e<<1$ the error scales approximatively uniformly on a logarithmic scale with respect to $ h $.\\
+For $\mathbb{P}_e\ge 1$ the empirical profiles become very similar to the analytical $h^2$ one, suggesting that the order of convergence of the method is equal to 2. The curve obtained in the case of $\mathbb{P}_e=1$ shows another interesting feature, i.e. the presence of a \emph{plateau} for small $h$ values. This is, however, is not surprising: the error cannot become arbitrarly small when the mesh size decreases and a saturation of the performances of the method for small enough $h$ is expected. As a matter of fact, a saturation for large values of the mesh size is expected as well: such a region, however, is not extremely interesting from a numerical point of view (it is just signalling that the choice of the mesh size has not been made optimally) and has not been investigated.\\
+A more precise analysis can be performed through the data contained in the file \emph{Errors$\_$P$\_$numb$\_$10.500000.txt}, which is reported in the following:
+\\
+\\
+\\
+\\
+\\
+
+  
+\begin{lstlisting}
+Details of numerical method for ADR equation through Gauss-Seidel algorithm for alpha=1, beta=21, gamma=0.
+#1-Mesh size             2-Error (LinfNorm)       3-log2(Error Ratios)     
+0.1                      0.146847                 	                        
+0.05                     0.0384623                1.93279                  
+0.025                    0.0086967                2.14491                  
+0.0125                   0.00212548               2.03268                  
+0.00625                  0.000528445              2.00797                  
+0.003125                 0.00013208               2.00034                  
+0.0015625                3.30134e-05              2.00029 
+\end{lstlisting}
+
+
+The third column of the file contains the results of Eqn.\eqref{eqn:log-conv} for $\mathbb{P}_e=10.500$. It is evident that the method has indeed order of convergence 2.\\
+By means of computing the empirical mean and standard error of the numerical results obtained, one has:
+
+\begin{align}
+	\label{eqn:order-of-convergence}
+	O_c = 2.02 \pm 0.07
+\end{align} 
+
+where $O_c$ represents the order of convergence of the method.\\
+The result is justifiable through Thm.\ref{thm:stab-conv}, which, as already pointed out, shows that, for stable methods, the order of convergence is at least the order of consistency of the method.
+
+\section{Conclusive remarks}
+In this section some additional comments and observation are presented.
+
+\subsection{Memory}
+As for the previous assignment, possible memory leaks have been checked.with the help of the software \emph{valgrind}, To do this, it is necessary to compile with \emph{-g} and \emph{-O1} optimisation. After having compiled the program, the following instruction has been used:
+
+
+\begin{lstlisting}
+$ valgrind --leak-check=yes ./adr
+\end{lstlisting}
+
+
+The following output has been produced on the terminal:
+
+\begin{verbatim}
+==31379== Memcheck, a memory error detector
+==31379== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==31379== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==31379== Command: ./adr
+==31379==
+==31379== HEAP SUMMARY:
+==31379==     in use at exit: 0 bytes in 0 blocks
+==31379==   total heap usage: 244,730 allocs, 244,730 frees, 130,033,803 bytes allocated
+==31379==
+==31379== All heap blocks were freed -- no leaks are possible
+==31379==
+==31379== For counts of detected and suppressed errors, rerun with: -v
+==31379== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+\end{verbatim}
+
+One can clearly see that no memory has been lost. This is however not surprising since no memory was dynamically allocated by the program and the correctness of the constructor for the SparseMatrix class was checked in the previous assignment.\\
+
+\subsection{Performances}
+\label{subsec:perf}
+Performances can be checked through the following commands:
+\begin{verbatim}
+$ valgrind --tool=callgrind ./adr
+$ kcachegrind
+\end{verbatim}
+
+The first command analyses the perfomances in the terms of load distrubution, while \emph{kcachegrind} is used to visualise the load distribution results. Differently from the previous case, performances depend on the code of the first assignment. The functions called within \emph{ADR$\_$Test} and \emph{Solver} are the ones taking up the majority of the time needed: unsurprisingly, \emph{Gauss-Seidel} is the most ``time-consuming" of them.\\
+
+
+\cleardoublepage
+%\add1contentsline{toc}{chapter}{\bibname}
+\begin{thebibliography}{99}
+
+\bibitem{numerical-math} A. Quateroni, R. Sacco, F. Saleri;
+\emph{Numerical Mathematics}, Vol.37, Springer Verlag, (2007).
+
+\bibitem{lec-notes} T. Grafke;
+\emph{Scientific Computing}, Lecture Notes, University of Warwick, (2018).
+
+
+
+
+
+
+
+\printindex
+\end{thebibliography}
+\bibliography{bibliography} % BibTeX database without .bib extension
+\end{document}
+
+
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+%\bibliographystyle{apalike}
+
+%\bibliography{sample}
+
+----------------------------------------------------------------------------------------
+
+
+%end{document}
