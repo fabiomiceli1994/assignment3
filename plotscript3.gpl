@@ -5,7 +5,7 @@ set output 'Err_M2_0.1.pdf'
 set xlabel "{/Symbol t}"
 set ylabel "Approximation Error"
 set key right bottom
-set title "Approximation error over time for different schemes, {/Symbol t}_0=0.1"
+set title "Approximation error over time for Model 2, {/Symbol t}_0=0.1"
 set logscale xy
 
 set style line 1 \

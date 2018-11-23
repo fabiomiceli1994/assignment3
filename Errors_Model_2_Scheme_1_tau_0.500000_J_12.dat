@@ -1,5 +1,5 @@
-#Error for different scheme1
-1-tau                    2-Maximum Error          3-EOCS                   
+#Error for different scheme 1
+#1-tau                   2-Maximum Error          3-EOCS                   
 0.5                      inf                      	
 0.25                     inf                      -nan
 0.125                    inf                      -nan

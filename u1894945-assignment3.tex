@@ -109,8 +109,33 @@ Student Number: 1894945
 %\clearpage 
 
 \section{Introduction}
+In this assignment the approximation of solutions to the Cauchy problem
+for scalar ordinary differential equations (ODEs) will be considered.
 
-\subsection{Initial value problem}
+\begin{definition}
+	\label{def:Cauchy-prob}
+	Let $I\subset\mathbb{R}$ be an interval, $t_0\in I$, $f(t,y):I\times\mathbb{R}\rightarrow\mathbb{R}$. The initial value problem (IVP) for a first order ODE is to find a function $y\in C^1(I)$, such that:
+	\begin{align}
+		\label{eqn:Cauchy-prob}
+		\begin{cases}
+		y'(t)=f(t,y(t)),\hspace{4mm}\forall t\in\mathbb{R}\\
+		y(t_0)=y_0
+		\end{cases}
+	\end{align} 
+	for the initial condition $y_0\in\mathbb{R}$. If $f$ does not explicitly depend on
+	$t$ (but only through $y(t)$) the IVP is called autonomous.
+\end{definition}
+
+The following theorem provides sufficient conditions for the existence and uniqueness of solutions to Problem \ref{def:Cauchy-prob}.\\
+
+\begin{theorem}
+	\label{thm:Picard}
+	If $f(t,y(t))$ is continuous in t, the IVP \ref{def:Cauchy-prob} admits a unique global solution if there exists a constant $L>0$ independent of t such that
+	\begin{align}
+		\label{eqn:Lipschitz}
+		|f(t,y_1)-f(t,y_2)|\le L|y_1-y_2|\hspace{5mm}\forall t\in I,\hspace{3mm} y_1,y_2\in\mathbb{R}
+	\end{align}
+\end{theorem}
 
 
 \section{The program}

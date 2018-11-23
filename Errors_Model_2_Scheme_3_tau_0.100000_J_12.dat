@@ -1,5 +1,5 @@
-#Error for different scheme3
-1-tau                    2-Maximum Error          3-EOCS                   
+#Error for different scheme 3
+#1-tau                   2-Maximum Error          3-EOCS                   
 0.1                      0.00208592               	
 0.05                     6.50329e-05              5.00337
 0.025                    4.32878e-06              3.90914

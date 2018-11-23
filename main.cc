@@ -68,9 +68,9 @@ int main ( int argc, char **argv )
     std::cout << "Failed to open the file." << std::endl;
     exit(EXIT_FAILURE);
   }
-  myFile << "#Error for different scheme" + std::to_string(schemeNumber) << std::endl;
+  myFile << "#Error for different scheme " + std::to_string(schemeNumber) << std::endl;
   myFile.width(25);
-  myFile << std::left << "1-tau" ;
+  myFile << std::left << "#1-tau" ;
   myFile.width(25);
   myFile << std::left << "2-Maximum Error" ;
   myFile.width(25);
@@ -92,6 +92,7 @@ int main ( int argc, char **argv )
     }
     //std::cout << "tau=" << tau << " and " << "maxError=" << maxError << "." << std::endl;
   }
+  std::cout << "Solved Model " << modelNumber << " with scheme " << schemeNumber << " for tau_0 = " << tau*pow(2, level) << std::endl;
   myFile.close();
   return 0;
 }

@@ -43,6 +43,8 @@ public:
     double tmp_sum; //I use this sum for updating the k[i] values. Is u_n + h*sum_{j=1}^{s}a_{ij}k[j]
     std::vector<double> k(stages_);
 
+    unsigned evaluationsCount = 0;
+
     for(int i=0; i<stages_; ++i)
     {
       tmp_sum = y;
@@ -54,10 +56,12 @@ public:
       {
         unsigned iter = 0;
         double error = ( -k[i] + model.f(t + c_[i]*h, tmp_sum + h*a(i,i)*k[i]) );
+        double num, den;
         while(iter < 1e6 && error > 1e-6 ) //1e6 is maximum number of iterations and 1e-6 is the given tol
         {
-          k[i] = k[i] - ( -k[i] + model.f(t + c_[i]*h, tmp_sum + h*a(i,i)*k[i] ) )/( -1 + model.df( t + c_[i]*h, tmp_sum + k[i] )*h*a(i,i) );
-          error = -k[i] + model.f(t + c_[i]*h, tmp_sum + h*a(i,i)*k[i]);
+          den = -1 + model.df( t + c_[i]*h, tmp_sum + k[i] )*h*a(i,i);
+          k[i] -= error/den;
+          error = num;
           iter ++;
         }
         tmp_sum += h*a(i,i)*k[i]; //plugging the result of the newton method in the tmp_sum
@@ -140,7 +144,7 @@ public:
   DIRK2() : DIRK(3)
   {
   double delta = 0.5 + sqrt(3)/6;
-	a(1,0) = delta;
+	a(0,0) = delta;
   a(1,0) = 1 - 2*delta;
   a(1,1) = delta;
 	b_[0] = (0.5 - delta)/(1 - 2*delta);

@@ -48,6 +48,14 @@ $(RESULTS): $(PROGRAM)
 	./$(PROGRAM) 2 4 0.1 12
 	./$(PROGRAM) 1 4 0.5 12
 	./$(PROGRAM) 2 4 0.5 12
+	# ./$(PROGRAM) 3 1 0.1 12
+	# ./$(PROGRAM) 3 2 0.1 12
+	# ./$(PROGRAM) 3 3 0.1 12
+	# ./$(PROGRAM) 3 4 0.1 12
+	# ./$(PROGRAM) 3 1 0.5 12
+	# ./$(PROGRAM) 3 2 0.5 12
+	# ./$(PROGRAM) 3 3 0.5 12
+	# ./$(PROGRAM) 3 4 0.5 12
 
 #g++ -O3 -Wall -Wfatal-errors -pedantic $(CPPFLAGS) $(OBJS) -o $(PROGRAM)
 $(PROGRAM): $(OBJS)
