@@ -16,14 +16,14 @@
 #include "models.hh"
 
 template <class Model>
-double solve(const Model &model, const DIRK &scheme, double tau)
+double solve(const Model &model, const DIRK &scheme, double tau, unsigned &count)
 {
   double maxError = 0;
   double y=model.y0();
   double t=0;
   while ( t<=model.T() )
   {
-    y =  scheme.evolve(y,t,tau,model);
+    y =  scheme.evolve(y,t,tau,model, count);
     t += tau;
     double error = y - model.exact(t);
     maxError = std::max(maxError,std::abs(error));
@@ -76,9 +76,11 @@ int main ( int argc, char **argv )
   myFile.width(25);
   myFile << std::left << "3-EOCS" << std::endl;
 
+  unsigned count = 0;
+
   for (int i=0;i<level;++i,tau/=2.)
   {
-    maxErrors[i] = solve(model, *schemes[schemeNumber], tau);
+    maxErrors[i] = solve(model, *schemes[schemeNumber], tau, count);
     myFile.width(25);
     myFile << std::left << tau ;
     myFile.width(25);
@@ -92,7 +94,8 @@ int main ( int argc, char **argv )
     }
     //std::cout << "tau=" << tau << " and " << "maxError=" << maxError << "." << std::endl;
   }
-  std::cout << "Solved Model " << modelNumber << " with scheme " << schemeNumber << " for tau_0 = " << tau*pow(2, level) << std::endl;
   myFile.close();
+  std::cout << "Solved Model " << modelNumber << " with scheme " << schemeNumber << " for tau_0 = " << tau*pow(2, level) << std::endl;
+  std::cout << count << std::endl;
   return 0;
 }

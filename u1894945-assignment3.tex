@@ -126,16 +126,366 @@ for scalar ordinary differential equations (ODEs) will be considered.
 	$t$ (but only through $y(t)$) the IVP is called autonomous.
 \end{definition}
 
-The following theorem provides sufficient conditions for the existence and uniqueness of solutions to Problem \ref{def:Cauchy-prob}.\\
+The following theorem provides sufficient conditions for the existence and uniqueness of solutions to Problem (\ref{def:Cauchy-prob}).\\
 
 \begin{theorem}
 	\label{thm:Picard}
-	If $f(t,y(t))$ is continuous in t, the IVP \ref{def:Cauchy-prob} admits a unique global solution if there exists a constant $L>0$ independent of t such that
+	If $f(t,y(t))$ is continuous in t, the IVP (\ref{def:Cauchy-prob}) admits a unique global solution if there exists a constant $L>0$ independent of t such that
 	\begin{align}
 		\label{eqn:Lipschitz}
 		|f(t,y_1)-f(t,y_2)|\le L|y_1-y_2|\hspace{5mm}\forall t\in I,\hspace{3mm} y_1,y_2\in\mathbb{R}
 	\end{align}
 \end{theorem}
+
+Stability can be formulated in the following way.
+
+\begin{definition}
+	\label{def:stability}
+	Consider the following perturbed IVP:
+	\begin{align}
+	\label{eqn:pert-prob}
+	\begin{cases}
+	z'(t)=f(t,z(t))+\delta(t),\hspace{4mm}\forall t\in\mathbb{R}\\
+	z(t_0)=y_0+\delta_0
+	\end{cases}
+	\end{align}
+	where both the initial condition and the function $f$ are perturbed. IVP (\ref{def:Cauchy-prob}) is stable, if for any perturbation $(\delta_0, \delta(t))$ staisfying $|\delta_0|<\varepsilon$, $|\delta(t)|<\varepsilon\hspace{3mm}\forall t\in I$, $\varepsilon$ bein small enough to guarantee a unique solution for the problem still exists, $\exists$ $C>0$ such that 
+	
+	$$|y(t)-z(t)|<C\varepsilon\hspace{5mm}\forall t\in I$$ 
+\end{definition}
+
+It is worth making note that the Lipschitz property of $f$ implies stability of Problem (\ref{def:Cauchy-prob}), as it can be shown by means of the Gronwall lemma.\\
+
+Since a discrete version of the Gronwall lemma will be needed in the following to prove
+stability of discrete schemes, it is convenient to introduce such a variation immediately.
+
+\begin{theorem}
+	\label{thm:Gronwall-discrete}
+	Let $\alpha_n$ and $\beta_n$ be two non-negative sequences, $g_0\ge 0$ and $u_n$ a sequence such that:
+	\begin{align}
+	\begin{cases}
+	u_0\le g_0\\
+	u_n\le g_0 + \sum_{s=0}^{n-1}\alpha_s + \sum_{s=0}^{n-1}\beta_su_s, \hspace{4mm}n\ge 1
+	\end{cases}
+	\end{align}
+	Then:
+	\begin{align*}
+		u_n\le\left(g_0 + \sum_{s=0}^{n-1}\alpha_s\right)exp{\left(\sum_{s=0}^{n-1}\beta_s\right)}	\end{align*}
+\end{theorem}
+
+\subsection{One-step methods}
+In the following, the integration interval $I=[t_0, t_0+T]$ will be discretised with $N$ evenly spaced intervals $I_n=[t_n, t_{n+1}]$ , where $t_n=t_0+nh$. The quantity $h=|I_n|$ is called the discretisation stepsize. It is worth making notice that it has not been required that $h=\frac{T}{N}$, i.e. it is possible that $t_N\ge t_0 + T$.
+At each node $t_i$, let $u_i$ be the approximation of the solution $y(t_i)=y_i$. Additionally, denote $f(t_i,u_i)=f_i$.\\
+
+\begin{definition}
+	\label{def:One-step-method}
+	A numerical method approximating IVP (\ref{def:Cauchy-prob}) is called one-step method, if $\forall n\ge 0$, $u_{n+1}$ depends only on $u_n$. The method is called multi-step method otherwise.
+\end{definition}
+
+In the present assignment the following one-step methods are used.\\
+
+\begin{definition}[Forward Euler Method]
+	\label{def:FE}
+	\begin{align}
+	\begin{cases}
+	\label{eqn:FE}
+	u_0=y_0\\
+	u_{n+1}=u_n+hf_n
+	\end{cases}
+	\end{align}
+\end{definition}
+
+\begin{definition}[Backward Euler Method]
+	\label{def:BE}
+	\begin{align}
+	\begin{cases}
+	\label{eqn:BE}
+	u_0=y_0\\
+	u_{n+1}=u_n+hf_{n+1}
+	\end{cases}
+	\end{align}
+\end{definition}
+
+\begin{definition}[Heun Method]
+	\label{def:Heun}
+	\begin{align}
+	\begin{cases}
+	\label{eqn:Heun}
+	u_0=y_0\\
+	u_{n+1}=u_n+\frac{h}{2}(f_n+f(t_{n+1}, u_n+hf_n))
+	\end{cases}
+	\end{align}
+\end{definition}
+
+Of the above methods, the forward Euler method and the Heun method are explicit,
+while the backward Euler method is implicit.
+
+\begin{definition}
+	\label{def:implicit-explicit}
+	A method is called explicit, if $u_{n+1}$ can be computed directly in terms of previous values $u_k$, $k<n$. It is called implicit, if $u_{n+1}$ implicitly depends on itself through f.
+\end{definition}
+
+\subsection{Zero Stability}
+Explicit one-step methods can be always written as:
+
+\begin{align}
+	\label{eqn:one-step-method}
+	u_{n+1}=u_n+h\Phi(t_n,u_n,f_n;h)\hspace{5mm}0\le n\le N-1,\hspace{3mm}u_0=y_0
+\end{align}
+
+If we additionally call $y_n=y(t_n)$, the restriction of the solution of the IVP to our
+temporal discretisation becomes:
+
+$$y_{n+1}=y_n+h\Phi(t_n,u_n,f(t_n, y_n);h)+\varepsilon_{n+1}\hspace{5mm}0\le n\le N-1,\hspace{3mm}u_0=y_0$$
+
+where $\varepsilon_{n+1}$ is the residual at the node $t_{n+1}$. In general, since every numerical method only approximates the continuous IVP, one cannot expect it to transform $y_n$ into $y_{n+1}$ precisely, and thus the residual will be non-zero.\\
+
+\begin{definition}
+	\label{def:truncation-error}
+	The quantity:
+	\begin{equation}
+		\label{eqn:local-truncation-error}
+		\tau_n(h)=\frac{\varepsilon_n}{h}
+	\end{equation}
+	is called the local truncation error (LTE) at the node $t_n$. Consequently, the global truncation error is defined as:
+	\begin{equation}
+	\label{eqn:global-truncation-error}
+	\tau(h)=\max\limits_{0\le n\le N-1}|\tau_{n+1}(h)|
+	\end{equation}
+\end{definition}
+
+The following definition is also of extreme importance for numerical IVPs.
+
+\begin{definition}
+	\label{def:consistency}
+	A method is said to be consistent if:
+	$$\tau(h)\rightarrow 0\hspace{3mm}\text{for}\hspace{3mm}h\rightarrow 0$$
+	Moreover, a scheme has a consistency order $p$ if:
+	$$\tau(h)=\mathcal{O}(h^p)\hspace{3mm}\text{for}\hspace{3mm}h\rightarrow 0$$
+\end{definition}
+
+One can now introduce the following.
+
+\begin{definition}
+	\label{def:zero-stability-one-step}
+	A one-step method is zero-stable if $\exists h>0$, $\exists C>0$ such that $\forall h\in (0, h_0]$, $\forall\varepsilon>0$ sufficiently small:
+	
+	$$|\delta_n|\le\varepsilon\implies |z_n-u_n|\le C\varepsilon$$
+	
+	where $z_n$ and $u_n$ are the solutions of:
+	
+	\begin{align*}
+	\begin{cases}
+	z_{n+1}=z_n+h\left(\Phi(t_n, z_n, f(t_n, z_n);h)+\delta_{n+1}\right)\\
+	z_0=y_0+\delta_0
+	\end{cases}
+	\end{align*}
+	
+	and 
+	
+	\begin{align*}
+	\begin{cases}
+	u_{n+1}=u_n+h\left(\Phi(t_n, z_n, f(t_n, u_n);h)\right)\\
+	u_0=y_0
+	\end{cases}
+	\end{align*}
+	
+	for $0\le n\le N$.
+	This property ensures that the numerical method is robust against small changes in
+	the data and thus corresponds to the notion of stability defined more generally earlier. Again, one requests stability of a numerical method because it implies weak sensitivity with respect to unavoidable errors because of the computer’s finite arithmetic accuracy.
+\end{definition}
+
+\begin{theorem}
+	\label{thm:zero-stability}
+	Consider a one-step method for an IVP. Assuming that for the increment function $\Phi$, $\exists h_0>0$, $\Lambda>0$ such that $\forall h\in(0, h_0]$
+	
+	
+	$$|\Phi(t_n, u_n, f(t_n, u_n);h)-\Phi(t_n, z_n,f(t_n, z_n);h)|\le\Lambda|u_n-z_n|$$
+	
+	for $0\le n\le N$, i.e. that $\Phi$ is Lipschitz continuous with respect to its second argument. Then the one-step method is stable.\\
+\end{theorem}
+
+\begin{proof}
+	See Ref.(\cite{lec-notes}).
+\end{proof}
+
+
+\subsection{Convergence analysis}
+\begin{definition}
+	\label{def:convergence}
+	A method is said to be convergent if 
+	
+	$$|y_n-u_n|\rightarrow 0\hspace{2mm}\text{as}\hspace{2mm}h\rightarrow 0\hspace{3mm}\forall n\in\lbrace 1,\cdots, n\rbrace$$
+	
+	and is said to be convergent of order $p$ if 
+	
+	
+	$$|y_n-u_n|\rightarrow 0\hspace{2mm}\text{as}\hspace{2mm}h\rightarrow \mathcal{O}(h^p)\hspace{3mm}\forall n\in\lbrace 1,\cdots, n\rbrace$$
+\end{definition}
+
+\begin{theorem}[Convergence for one-step methods]
+	\label{thm:convergence-one-step}
+	Under the same assumptions as in Thm.\ref{thm:zero-stability} and the additional assumption that 
+	
+	$$|y_0-u_0|\leftarrow h=0\hspace{4mm}h\rightarrow 0$$
+    then the corresponding one-step method is convergent. More precisely, one has:
+    
+    \begin{align}
+    	\label{eqn:convergence-one-step}
+    	|y_n-u_n|\le\left(|y_0-u_0)|+nh\tau (h)\right)e^{nh\Lambda},\hspace{5mm}1\le n\le N
+    \end{align}
+    
+    Moreover, if the one-step method has consistency order p and $|y_0-u_0|=\mathcal{O}(h^p)$, then the method is also convergent with order p.\\
+\end{theorem}
+
+\begin{proof}
+	See Ref.(\cite{lec-notes}).
+\end{proof}
+
+\subsection{Absolute stability}
+In opposition to the property of zero-stability, the concept of absolute stability can be introduced. Loosely, a numerical method is absolutely stable if, for a fixed stepsize
+$h$, $u_n$ remains bounded as we let $t_n\rightarrow\infty$. In short, for absolute stability, one looks at the asymptotic behaviour of $u_n$ for long times, whereas zero-stability deals with a fixed integration interval, but considers $h\rightarrow 0$.\\
+In order to define absolute stability, the following, very particular IVP is introduced: 
+
+\begin{align}
+\label{eqn:test-problem}
+\begin{cases}
+y'(t)=\lambda y(t),\hspace{5mm}t>0\\
+y(0)=1
+\end{cases}
+\end{align}
+
+where $\lambda\in\mathbb{C}$. Eqn.\eqref{eqn:test-problem} defines the \emph{test problem}.\\
+The solution to the test problem obviously is $y(t)=e^{\lambda t}$. In particular, we have $|y(t)|\rightarrow 0$ as $t\rightarrow \infty$ only if $Re(\lambda)<0$. For a general $\lambda\in\mathbb{C}$, the test problem captures the combined effect of decay or growth with simulations oscillation and it turns out to be informative to analyse how well our numerical solutions are able to approximate the correct solution depending on the choice of $\lambda$ in the complex plane.\\
+
+\begin{definition}[Absolute Stability]
+	\label{def:abs-stability}
+	A numerical method for approximating the test problem \eqref{eqn:test-problem} is called absolutely stable for a given $\lambda\in\mathbb{C}$ and stepsize $h>0$, if:
+	
+	$$|u_n|\rightarrow 0,\hspace{3mm}\text{for}\hspace{3mm} t_n\rightarrow\infty$$	 
+\end{definition}
+
+The numerical approximation $u_n$ depends on the stepsize $h$ and on the test problem parameter $\lambda$. A method will be absolutely stable only for certain values of $h$ and on the test problem parameter $\lambda$. A method will be absolutely stable only for certain values of $h$ and $\lambda$. 
+
+\begin{definition}
+	\label{def:region-abs-stab}
+	The region of absolute stability of a method is the complex plane region $\mathcal{A}\subset\mathbb{C}$ such that:
+	$$ \mathcal{A}=\lbrace z=h\lambda\in\mathbb{C}: \text{the method is absolutely stable} \rbrace$$
+\end{definition}
+
+\begin{definition}[A-stability]
+	\label{def:A-stability}
+	A method is said to be A-stable if
+	$$\mathcal{A}\cap\mathbb{C}^{-}=\mathbb{C}^{-}$$
+	where $\mathbb{C}^{-}=\lbrace z\in\mathbb{C}\hspace{1mm}|\hspace{1mm}Re(z)<0\rbrace$ and $\mathcal{A}$ is the region of absolute stability of the method.\\ 
+\end{definition}
+ 
+In other words, a method is A-stable if $|u_n|\rightarrow 0$ as $t_n\rightarrow\infty$ for all $\lambda$ with negative real part.\\
+
+\subsection{Runge-Kutta methods}
+In the present assignment, Runge-Kutta (RK) methods are employed.\\
+\begin{definition}[Runge-Kutta methods]
+	\label{def:RK}
+	RK methods are one-step methods of the form:
+	$$u_{n+1}=u_n + hF(t_n, u_n, f, h)$$
+	where the increment function $F$ is defined as
+	$$F(t_n, u_n, f, h)=\sum_{i=1}^{s}b_iK_i$$
+	for
+	\begin{align}
+		\label{eqn:Ki}
+		K_i=f\left(t_n + hc_i, u_n + h\sum_{j=1}^{s}a_{ij}K_j\right)\hspace{4mm}i\in\lbrace1,\dots s\rbrace
+	\end{align}
+	The integer $s$ stands for the number of stages of the method.\\
+\end{definition}
+
+It is worth to make notice of both the fact that the coefficients $A=(a_{ij})\in\mathbb{R}^{s\times s}$, $b\in\mathbb{R}^s$ and $c\in\mathbb{R}^s$ completely determine the RK method and of the fact that Eqn.\eqref{eqn:Ki} is an implicit equation for $K_i$.\\
+\begin{definition}
+	\label{def:Butcher-tableau}
+	An RK method is completely described by the Butcher tableau:\\
+		\begin{align*}
+			\begin{tabular}{c|c}
+			$\mathbf{c}$ & A  \\
+			\hline
+			& $\mathbf{b}^T$ \\
+			\end{tabular}
+			=
+			\begin{tabular}{c|c}
+			$c_1$ & $a_{11}\cdots a_{1s}$  \\
+			$\vdots$ & \vdots\hspace{5mm} \vdots \\
+			$c_s$ & $a_{s1}\cdots a_{ss}$ \\
+			\hline
+			& $b_1\cdots b_s$ \\
+			\end{tabular}
+		\end{align*}
+	
+\end{definition}
+An RK method is explicit, if each $K_i$ can be explicitly computed in terms of the coefficients $K_1,\dots ,K_{i-1}$ that have already been determined.\\
+As usual, consistency is defined by looking at the local truncation error, which in turn
+is obtained by computing the discrepancy when inserting the solution $y$ into the method.\\
+
+The following theorems, whose proof can be found in Ref.\cite{lec-notes}, are fundamental to characterise the properties of an RK method.\\
+
+\begin{theorem}
+	\label{thm:consistency-RK}
+	An RK method is consistent if $\sum_{i=1}^{s}b_i=1$.
+\end{theorem}
+
+\begin{theorem}[Maximal order of an RK method]
+	\label{thm:order-RK}
+	The following upper-bounds can be found for the order of consistency of RK methods:
+	\begin{itemize}
+		\item The order of consistency of an explicit s-stage-RK method is at most s;
+		\item The order of consistency of an s-stage implicit method is at most 2s.
+	\end{itemize}
+\end{theorem}
+
+\begin{theorem}[Order conditions for RK methods]
+	\label{thm:order-cond-RK}
+	Consider an s-stage-RK method with Butcher tableau 
+	\begin{tabular}{c|c}
+		$\mathbf{c}$ & A  \\
+		\hline
+		& $\mathbf{b}^T$ \\
+	\end{tabular}
+	. The method is order p iff $\forall q\in\lbrace 1,\cdots, p\rbrace$ the following conditions hold true:
+	\begin{itemize}
+		\item Order 1: $\sum_{i=1}^{s}b_i=1$;
+		\item Order 2: $\frac{1}{2}\sum_{i=1}^{s}b_ic_i$;
+		\item Order 3: $\sum_{i=1}^{s}b_ic_i^2=\frac{1}{3}$ and $\sum_{i=1}^{s}\sum_{j=1}^{s}b_ia_{ij}c_j=\frac{1}{6}$;
+	\end{itemize}
+	For greater orders, more conditions are needed.\\
+\end{theorem}
+
+Being that RK methods are one-step methods, their zero-stability comes from Thm.\ref{thm:zero-stability}, whereas their consistency is guaranteed by construction,
+e.g. by adhering to the conditions of Thm.\ref{thm:order-cond-RK}. Zero-stability and consistency imply their convergence by the fundamental theorem.\\
+\subsubsection{Absolute stability for RK methods}
+The absolute stability of an RK method can be investigated by its stability function
+$R:\mathbb{C}\rightarrow\mathbb{C}$:
+\begin{align}
+	\label{eqn:R}
+	R(z)= 1+z\mathbf{b}^T(I-zA)^{-1}\mathbf{e}
+\end{align}
+where $A$ and $\mathbf{b}$ are given by the method's Butcher tableau, $\mathbf{e}=(1,\cdots, 1)^T\in\mathbb{R}^s$ and $I\in\mathbb{R}^{s\times s}$ is the identity matrix.
+
+\begin{theorem}
+	\label{thhm:sol-evol-RK}
+	If an RK method is applied to the test problem \eqref{eqn:test-problem}, then the numerical solution evolves according to:
+	$$u_{n+1}=R(h\lambda)u_n,\hspace{5mm}n\in\lbrace1,\cdots,N\rbrace$$
+	where $R$ is the method's stability function.\\
+\end{theorem}
+
+With this knowledge, the region of absolute stability is easily determined: an RK
+method is absolutely stable for
+
+$$ z=h\lambda\in\mathbb{C} $$
+
+iff
+
+$$||R(z)||<1$$
+
+Hence, the region of absolute stability of an RK method is:
+
+$$A=\lbrace z\in\mathbb{C}:||R(z)||<1\rbrace$$
 
 
 \section{The program}
@@ -207,7 +557,7 @@ In the following, the results of the more significant tests performed will be re
 \subsubsection{Solutions to the AD equation}
 The \emph{ADR$\_$test} function has been shown to work correctly for the following  P\'{e}clet numbers:
 $$\mathbb{P}_e=\lbrace 0.0000, 0.0005, 0.0100, 1.0000, 10.5000 \rbrace$$
-The solutions $u\_x$ obtained for the different cases, indexed by the respective $J$, can be found in the files $P\_numb\_...\_Solution\_J\_....txt$ , where the dots stand for the different possible values of $\mathbb{P}_e$ and $J$. The residual error at every iteration, in the $L_\infty$ norm, is stored in the files $P\_numb\_...\_Residual\_J\_....txt$, which provide a direct proof of the general correctness of the code.\\
+The solutions $u\_x$ obtained for the different , indexed by the respective $J$, can be found in the files $P\_numb\_...\_Solution\_J\_....txt$ , where the dots stand for the different possible values of $\mathbb{P}_e$ and $J$. The residual error at every iteration, in the $L_\infty$ norm, is stored in the files $P\_numb\_...\_Residual\_J\_....txt$, which provide a direct proof of the general correctness of the code.\\
 Finally, the distance between the exact solution and the approximate one, in the (discrete) $L_\infty$ is printed on \emph{Errors$\_$P$\_$numb$\_$...txt} files. Unsurprisingly, the error becomes smaller as the mesh size decreases.\\
 The correctness of the algorithm has been tested for different values of $h$, as required by the assignment. The values of the mesh size have been chosen to be:
 \begin{align}

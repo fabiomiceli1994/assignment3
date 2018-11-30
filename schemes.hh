@@ -36,14 +36,12 @@ public:
   // replace this function by a function that works for an arbitrary
   // DIRK method
   template <class Model>
-  double evolve(const double &y,double t,double h,const Model &model) const //one step forward
+  double evolve(const double &y,double t,double h,const Model &model,unsigned &count) const //one step forward
   {
     //ret is what will be returned
     double ret = y; //u_n + h*F for RK methods. Is set to y because we start at u_n
     double tmp_sum; //I use this sum for updating the k[i] values. Is u_n + h*sum_{j=1}^{s}a_{ij}k[j]
     std::vector<double> k(stages_);
-
-    unsigned evaluationsCount = 0;
 
     for(int i=0; i<stages_; ++i)
     {
@@ -56,17 +54,22 @@ public:
       {
         unsigned iter = 0;
         double error = ( -k[i] + model.f(t + c_[i]*h, tmp_sum + h*a(i,i)*k[i]) );
-        double num, den;
+        count ++;
+        double den;
         while(iter < 1e6 && error > 1e-6 ) //1e6 is maximum number of iterations and 1e-6 is the given tol
         {
           den = -1 + model.df( t + c_[i]*h, tmp_sum + k[i] )*h*a(i,i);
+          count++;
           k[i] -= error/den;
-          error = num;
+          error = ( -k[i] + model.f(t + c_[i]*h, tmp_sum + h*a(i,i)*k[i]) );
+          count++;
+          //error = num;
           iter ++;
         }
         tmp_sum += h*a(i,i)*k[i]; //plugging the result of the newton method in the tmp_sum
       }
       k[i] = model.f(t + c_[i]*h, tmp_sum);
+      count++;
       ret += h*b_[i]*k[i];
     }
     return ret; //return u_{n+1}

@@ -22,27 +22,69 @@
 \newlabel{eqn:Cauchy-prob}{{1}{2}{}{equation.1.1}{}}
 \newlabel{thm:Picard}{{1}{2}{}{theorem.1}{}}
 \newlabel{eqn:Lipschitz}{{2}{2}{}{equation.1.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {2}The program}{2}{section.2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Implementation}{2}{subsection.2.1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Running the program}{3}{subsection.2.2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Testing correctness}{3}{subsection.2.3}}
-\newlabel{eqn:AD}{{3}{3}{Testing correctness}{equation.2.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Results of the tests}{4}{subsection.2.4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.1}Solutions to the AD equation}{4}{subsubsection.2.4.1}}
-\newlabel{eqn:h-choice}{{4}{4}{Solutions to the AD equation}{equation.2.4}{}}
-\citation{numerical-math}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.2}Small P\'{e}clet numbers}{5}{subsubsection.2.4.2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.3}P\'{e}clet number close or equal to 1}{5}{subsubsection.2.4.3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.4}Large P\'{e}clet number}{5}{subsubsection.2.4.4}}
+\newlabel{def:stability}{{2}{2}{}{definition.2}{}}
+\newlabel{eqn:pert-prob}{{3}{2}{}{equation.1.3}{}}
+\newlabel{thm:Gronwall-discrete}{{2}{2}{}{theorem.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}One-step methods}{3}{subsection.1.1}}
+\newlabel{def:One-step-method}{{3}{3}{}{definition.3}{}}
+\newlabel{def:FE}{{4}{3}{Forward Euler Method}{definition.4}{}}
+\newlabel{eqn:FE}{{5}{3}{Forward Euler Method}{equation.1.5}{}}
+\newlabel{def:BE}{{5}{3}{Backward Euler Method}{definition.5}{}}
+\newlabel{eqn:BE}{{6}{3}{Backward Euler Method}{equation.1.6}{}}
+\newlabel{def:Heun}{{6}{3}{Heun Method}{definition.6}{}}
+\newlabel{eqn:Heun}{{7}{3}{Heun Method}{equation.1.7}{}}
+\newlabel{def:implicit-explicit}{{7}{3}{}{definition.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Zero Stability}{3}{subsection.1.2}}
+\newlabel{eqn:one-step-method}{{8}{3}{Zero Stability}{equation.1.8}{}}
 \citation{lec-notes}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Error analysis and order of convergence}{6}{subsection.2.5}}
-\newlabel{subsec:Error}{{2.5}{6}{Error analysis and order of convergence}{subsection.2.5}{}}
-\newlabel{eqn:log-conv}{{5}{6}{Error analysis and order of convergence}{equation.2.5}{}}
-\newlabel{eqn:order-of-convergence}{{6}{7}{Error analysis and order of convergence}{equation.2.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Conclusive remarks}{7}{section.3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Memory}{7}{subsection.3.1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Performances}{8}{subsection.3.2}}
-\newlabel{subsec:perf}{{3.2}{8}{Performances}{subsection.3.2}{}}
+\newlabel{def:truncation-error}{{8}{4}{}{definition.8}{}}
+\newlabel{eqn:local-truncation-error}{{9}{4}{}{equation.1.9}{}}
+\newlabel{eqn:global-truncation-error}{{10}{4}{}{equation.1.10}{}}
+\newlabel{def:consistency}{{9}{4}{}{definition.9}{}}
+\newlabel{def:zero-stability-one-step}{{10}{4}{}{definition.10}{}}
+\newlabel{thm:zero-stability}{{3}{4}{}{theorem.3}{}}
+\citation{lec-notes}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Convergence analysis}{5}{subsection.1.3}}
+\newlabel{def:convergence}{{11}{5}{}{definition.11}{}}
+\newlabel{thm:convergence-one-step}{{4}{5}{Convergence for one-step methods}{theorem.4}{}}
+\newlabel{eqn:convergence-one-step}{{11}{5}{Convergence for one-step methods}{equation.1.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Absolute stability}{5}{subsection.1.4}}
+\newlabel{eqn:test-problem}{{12}{5}{Absolute stability}{equation.1.12}{}}
+\newlabel{def:abs-stability}{{12}{5}{Absolute Stability}{definition.12}{}}
+\newlabel{def:region-abs-stab}{{13}{6}{}{definition.13}{}}
+\newlabel{def:A-stability}{{14}{6}{A-stability}{definition.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Runge-Kutta methods}{6}{subsection.1.5}}
+\newlabel{def:RK}{{15}{6}{Runge-Kutta methods}{definition.15}{}}
+\newlabel{eqn:Ki}{{13}{6}{Runge-Kutta methods}{equation.1.13}{}}
+\newlabel{def:Butcher-tableau}{{16}{6}{}{definition.16}{}}
+\citation{lec-notes}
+\newlabel{thm:consistency-RK}{{5}{7}{}{theorem.5}{}}
+\newlabel{thm:order-RK}{{6}{7}{Maximal order of an RK method}{theorem.6}{}}
+\newlabel{thm:order-cond-RK}{{7}{7}{Order conditions for RK methods}{theorem.7}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.5.1}Absolute stability for RK methods}{7}{subsubsection.1.5.1}}
+\newlabel{eqn:R}{{14}{7}{Absolute stability for RK methods}{equation.1.14}{}}
+\newlabel{thhm:sol-evol-RK}{{8}{7}{}{theorem.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}The program}{8}{section.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Implementation}{8}{subsection.2.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Running the program}{9}{subsection.2.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Testing correctness}{9}{subsection.2.3}}
+\newlabel{eqn:AD}{{15}{9}{Testing correctness}{equation.2.15}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Results of the tests}{10}{subsection.2.4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.1}Solutions to the AD equation}{10}{subsubsection.2.4.1}}
+\newlabel{eqn:h-choice}{{16}{10}{Solutions to the AD equation}{equation.2.16}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.2}Small P\'{e}clet numbers}{10}{subsubsection.2.4.2}}
+\citation{numerical-math}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.3}P\'{e}clet number close or equal to 1}{11}{subsubsection.2.4.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.4}Large P\'{e}clet number}{11}{subsubsection.2.4.4}}
+\citation{lec-notes}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Error analysis and order of convergence}{12}{subsection.2.5}}
+\newlabel{subsec:Error}{{2.5}{12}{Error analysis and order of convergence}{subsection.2.5}{}}
+\newlabel{eqn:log-conv}{{17}{12}{Error analysis and order of convergence}{equation.2.17}{}}
+\newlabel{eqn:order-of-convergence}{{18}{13}{Error analysis and order of convergence}{equation.2.18}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Conclusive remarks}{13}{section.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Memory}{13}{subsection.3.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Performances}{14}{subsection.3.2}}
+\newlabel{subsec:perf}{{3.2}{14}{Performances}{subsection.3.2}{}}
 \bibcite{numerical-math}{1}
 \bibcite{lec-notes}{2}
 \bibdata{bibliography}
