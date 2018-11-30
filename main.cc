@@ -16,19 +16,59 @@
 #include "models.hh"
 
 template <class Model>
-double solve(const Model &model, const DIRK &scheme, double tau, unsigned &count)
+double solve(const Model &model, const DIRK &scheme, double tau, const int schemeNumb, const int modelNumb, unsigned &count)
 {
-  double maxError = 0;
-  double y=model.y0();
-  double t=0;
-  while ( t<=model.T() )
-  {
-    y =  scheme.evolve(y,t,tau,model, count);
-    t += tau;
-    double error = y - model.exact(t);
-    maxError = std::max(maxError,std::abs(error));
-  }
-  return maxError;
+  if( ( tau==0.1 || tau==0.05) && (model.modelNumber_ == 1) )
+    {
+      std::ofstream myoutFile;
+      myoutFile.open("Error_Model_" + std::to_string(modelNumb) + "_Scheme_" + std::to_string(schemeNumb) + "_tau_" + std::to_string(tau) + ".dat", std::ios::out);
+      if(!myoutFile.good())
+      {
+        std::cout << "Failed to open the file." << std::endl;
+        exit(EXIT_FAILURE);
+      }
+      myoutFile << "#Error vs time for scheme " + std::to_string(modelNumb) + ", model " + std::to_string(schemeNumb)  << std::endl;
+      myoutFile.width(25);
+      myoutFile << std::left << "#1-t" ;
+      myoutFile.width(25);
+      myoutFile << std::left << "2-Error(t)" << std::endl;
+
+      double maxError = 0;
+      double y=model.y0();
+      double t=0;
+
+      myoutFile.width(25);
+      myoutFile << std::left << 0;
+      myoutFile.width(25);
+      myoutFile << std::left << maxError << std::endl;
+
+      while ( t<=model.T() )
+      {
+        y =  scheme.evolve(y,t,tau,model, count);
+        t += tau;
+        double error = y - model.exact(t);
+        maxError = std::max(maxError,std::abs(error));
+        myoutFile.width(25);
+        myoutFile << std::left << t;
+        myoutFile.width(25);
+        myoutFile << std::left << maxError << std::endl;
+      }
+      myoutFile.close();
+      return maxError;
+    }else
+    {
+      double maxError = 0;
+      double y=model.y0();
+      double t=0;
+      while ( t<=model.T() )
+      {
+        y =  scheme.evolve(y,t,tau,model, count);
+        t += tau;
+        double error = y - model.exact(t);
+        maxError = std::max(maxError,std::abs(error));
+      }
+      return maxError;
+    }
 }
 
 int main ( int argc, char **argv )
@@ -68,7 +108,7 @@ int main ( int argc, char **argv )
     std::cout << "Failed to open the file." << std::endl;
     exit(EXIT_FAILURE);
   }
-  myFile << "#Error for different scheme " + std::to_string(schemeNumber) << std::endl;
+  myFile << "#Error for scheme " + std::to_string(schemeNumber) + ", relative to model " + std::to_string(modelNumber) << std::endl;
   myFile.width(25);
   myFile << std::left << "#1-tau" ;
   myFile.width(25);
@@ -80,7 +120,7 @@ int main ( int argc, char **argv )
 
   for (int i=0;i<level;++i,tau/=2.)
   {
-    maxErrors[i] = solve(model, *schemes[schemeNumber], tau, count);
+    maxErrors[i] = solve(model, *schemes[schemeNumber], tau, schemeNumber, modelNumber, count);
     myFile.width(25);
     myFile << std::left << tau ;
     myFile.width(25);
@@ -94,8 +134,8 @@ int main ( int argc, char **argv )
     }
     //std::cout << "tau=" << tau << " and " << "maxError=" << maxError << "." << std::endl;
   }
+  std::cout << "Solved Model " << modelNumber << " with scheme " << schemeNumber << std::endl;
+  std::cout << "Number of calls to f function and df function : " << count << std::endl;
   myFile.close();
-  std::cout << "Solved Model " << modelNumber << " with scheme " << schemeNumber << " for tau_0 = " << tau*pow(2, level) << std::endl;
-  std::cout << count << std::endl;
   return 0;
 }
