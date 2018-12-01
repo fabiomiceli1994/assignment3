@@ -29,10 +29,10 @@ set style line 5 \
     linetype 0 linewidth 1 \
     pointtype 9 pointsize 0.8
 
-plot 'Errors_Model_1_Scheme_0_tau_0.100000_J_12.dat' using 1:2 with lp ls 1 title "FE", \
-     'Errors_Model_1_Scheme_1_tau_0.100000_J_12.dat' using 1:2 with lp ls 2 title "BE", \
-     'Errors_Model_1_Scheme_2_tau_0.100000_J_12.dat' using 1:2 with lp ls 3 title "IM", \
-     'Errors_Model_1_Scheme_3_tau_0.100000_J_12.dat' using 1:2 with lp ls 4 title "Heun3", \
-     'Errors_Model_1_Scheme_4_tau_0.100000_J_12.dat' using 1:2 with lp ls 5 title "DIRK2"
+plot 'EOCS_Model_1_Scheme_0_tau_0.100000_J_12.dat' using 1:2 with lp ls 1 title "FE", \
+     'EOCS_Model_1_Scheme_1_tau_0.100000_J_12.dat' using 1:2 with lp ls 2 title "BE", \
+     'EOCS_Model_1_Scheme_2_tau_0.100000_J_12.dat' using 1:2 with lp ls 3 title "IM", \
+     'EOCS_Model_1_Scheme_3_tau_0.100000_J_12.dat' using 1:2 with lp ls 4 title "Heun3", \
+     'EOCS_Model_1_Scheme_4_tau_0.100000_J_12.dat' using 1:2 with lp ls 5 title "DIRK2"
 
 quit

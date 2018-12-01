@@ -55,15 +55,14 @@ public:
         unsigned iter = 0;
         double error = ( -k[i] + model.f(t + c_[i]*h, tmp_sum + h*a(i,i)*k[i]) );
         count ++;
-        double den;
-        while(iter < 1e6 && error > 1e-6 ) //1e6 is maximum number of iterations and 1e-6 is the given tol
+        double den; //den stays for the denumerator of the fraction which updates k[i] in Newton's method
+        while(iter < 1e6 && std::abs(error) > 1e-6 ) //1e6 is maximum number of iterations and 1e-6 is the given tol
         {
           den = -1 + model.df( t + c_[i]*h, tmp_sum + k[i] )*h*a(i,i);
           count++;
           k[i] -= error/den;
-          error = ( -k[i] + model.f(t + c_[i]*h, tmp_sum + h*a(i,i)*k[i]) );
+          error = -k[i] + model.f(t + c_[i]*h, tmp_sum + h*a(i,i)*k[i]) ;
           count++;
-          //error = num;
           iter ++;
         }
         tmp_sum += h*a(i,i)*k[i]; //plugging the result of the newton method in the tmp_sum

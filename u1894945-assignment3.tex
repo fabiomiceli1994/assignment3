@@ -302,7 +302,7 @@ One can now introduce the following.
 	
 	$$|\Phi(t_n, u_n, f(t_n, u_n);h)-\Phi(t_n, z_n,f(t_n, z_n);h)|\le\Lambda|u_n-z_n|$$
 	
-	for $0\le n\le N$, i.e. that $\Phi$ is Lipschitz continuous with respect to its second argument. Then the one-step method is stable.\\
+	for $0\le n\le N$, i.e. that $\Phi$ is Lipschitz continuous with respect to its second argument. Then the one-step method is zero-stable.\\
 \end{theorem}
 
 \begin{proof}
@@ -450,14 +450,14 @@ The following theorems, whose proof can be found in Ref.\cite{lec-notes}, are fu
 	. The method is order p iff $\forall q\in\lbrace 1,\cdots, p\rbrace$ the following conditions hold true:
 	\begin{itemize}
 		\item Order 1: $\sum_{i=1}^{s}b_i=1$;
-		\item Order 2: $\frac{1}{2}\sum_{i=1}^{s}b_ic_i$;
+		\item Order 2: $\sum_{i=1}^{s}b_ic_i=\frac{1}{2}$;
 		\item Order 3: $\sum_{i=1}^{s}b_ic_i^2=\frac{1}{3}$ and $\sum_{i=1}^{s}\sum_{j=1}^{s}b_ia_{ij}c_j=\frac{1}{6}$;
 	\end{itemize}
 	For greater orders, more conditions are needed.\\
 \end{theorem}
 
 Being that RK methods are one-step methods, their zero-stability comes from Thm.\ref{thm:zero-stability}, whereas their consistency is guaranteed by construction,
-e.g. by adhering to the conditions of Thm.\ref{thm:order-cond-RK}. Zero-stability and consistency imply their convergence by the fundamental theorem.\\
+e.g. by adhering to the conditions of Thm.\ref{thm:order-cond-RK}., their convergence can be studied through the fundamental theorem.\\
 \subsubsection{Absolute stability for RK methods}
 The absolute stability of an RK method can be investigated by its stability function
 $R:\mathbb{C}\rightarrow\mathbb{C}$:
@@ -490,71 +490,356 @@ $$A=\lbrace z\in\mathbb{C}:||R(z)||<1\rbrace$$
 
 \section{The program}
 \subsection{Implementation}
-The program is built on the class ADR , which stands for Advection-Diffusion-Reaction. The class has 7 private variables: $J$ (the number of points in the interior of $[0,L]$), $\alpha$, $\beta$, $\gamma$ (the parameters associated to the ADR equation at hand), $L$ (the length of the interval), $u_0$ (the boundary condition at $0$) and $u_L$ (boundary condition at $L$). In this way, once the constructor is called, all the variables and parameters defining problem \eqref{eqn:ass-prob} are set.\\
-As pointed out in $\S$\ref{subsec:the-present-case}, BVPs can be solved through numerical methods for linear algebra: the member function \emph{MatrixBuild}, which accepts no argument, constructs matrix $A$ of Eqn.\eqref{eqn:matrix-form}, which will be later inverted through the Gauss-Seidel algorithm. Such a construction takes place within the function \emph{Solver}, that performs the tests required by the assignment instructions through the Gauss-Seidel method and outputs the results on different .txt files. For clarity reasons,  each time a simulation is performed, a suitable success message containing the different parameters of the corresponding test, is printed on the terminal. \emph{Solver} is a member function which accepts 4 arguments and implicitly returns the discretised solution \emph{u$\_$x}. The argument \emph{itCheck} represents the number of iterations after which a check for stagnation of the method is performed, while \emph{MaxIter} represents the maximum number of iterations the user is willing ``wait" and \emph{tol} the given tolerance.\\ 
-The member function \emph{An$\_$sol} outputs the analytical solutions at each point of $\Omega_h$, by simply computing either Eqn.\eqref{eqn:AD-sol} or Eqn.\eqref{eqn:DR-sol} at the given set of points. The choice between the two solutions is made by means of an \emph{if} instruction, checking if $\alpha\neq 0, \gamma=0$ or if $\alpha\neq 0, \beta=0$. The special case $\alpha\neq 0, \beta=0, \gamma=0$ is checked as well. If none of the above conditions is satisfied, the program exits with an appropriate error message to the user.\\
-Discretised and the analytical solutions are finally compared within the function \emph{ADR$\_$Test}. Such a function takes as arguments the values of the private variables, the arguments of $Solver$ and the different values of $J$ the user wants to test on. The function loops over them and prints the final error between the numerical solution and the analytical one, in the (discrete) $L_\infty$ norm, on suitable .txt files, whose names are defined through the parameters the user has set for the test. The logarithm of the ratio between errors obtained for different mesh sizes is computed and printed, too.\\
-Since, by means of simply changing the values provided in the main file, both class of equations can be tested with no further modifications to the code, the program can be regarded as particularly flexible.\\
+The program is built on the classes and struct contained in the files \emph{schemes.hh} and \emph{models.hh}, which contain the different RK method employed to find a solution and the different benchmark problem to test on, respectively.\\
+\subsubsection{schemes.hh file}
+\label{subsubsec:schemes}
+The class DIRK is made of 4 \emph{protected} variables: the matrix $A$, the vector $b$, the vector $c$ and the integer $s$, which fully characterise the Butcher tableau of any RK method. This is done through the following instructions, which can be found in the schemes.hh file:
+
+\begin{lstlisting}
+protected:
+
+	int stages_;
+
+	std::vector<double> a_,b_,c_;
+\end{lstlisting}
+
+It may be worth pointing out that, even though \emph{a$\_$} represents a matrix, it is implemented as a vector in the program.\\
+The classes $FE$, $BE$, $IM$, $Heun3$ and $DIRK2$ are implemented as derived classes of $DIRK$, being that all of them represent particular instances of such a class.\\
+
+The function \emph{evolve}, which returns the evolved approximated solution $u_{n+1}$, $u_n$ being the present approximation, can be found in the file as well. For flexibility reasons, the function is built as a \emph{template}: in this way, both methods can be accessed by the function. The prototype of the routine, is displayed in the following:
+
+\begin{lstlisting}
+double evolve(const double &y,double t,double h,const Model &model,unsigned &count) const //one step forward
+\end{lstlisting}
+
+Here $y$ represents the approximated solution at the time $t$, with $h$ the chosen discretisation stepsize.\\
+In case an implicit RK method is chosen, Eqn.\ref{eqn:Ki} becomes an implicit equations for $K_i$ and has to be solved by means of numerical methods. Here, Newton's method is has been employed.\\
+
+\begin{lstlisting}
+if( a(i,i)!=0 ) //implementing newton method
+{
+	unsigned iter = 0;
+	double error = ( -k[i] + model.f(t + c_[i]*h, tmp_sum + h*a(i,i)*k[i]) );
+	count ++;
+	double den; //den stays for the denumerator of the fraction which updates k[i] in Newton's method
+	while(iter < 1e6 && std::abs(error) > 1e-6 ) //1e6 is maximum number of iterations and 1e-6 is the given tol
+	{
+		den = -1 + model.df( t + c_[i]*h, tmp_sum + k[i] )*h*a(i,i);
+		count++;
+		k[i] -= error/den;
+		error = -k[i] + model.f(t + c_[i]*h, tmp_sum + h*a(i,i)*k[i]) ;
+		count++;
+	iter ++;
+	}
+\end{lstlisting}
+
+As it can be seen from the listed code above, the program checks if the chosen method happens to be implicit: if the entry $a_{ii}\neq 0$, then Newton's method is implemented. The error at every iteration, which is equal to $f\left(t+hc_i, u_n+h\sum_{j=1}^{i-1}a_{ij}K_j+ha_{ii}K_i\right)$, where $f$ is the one defined in Eqn.\eqref{eqn:Ki}, is contained in the variable \emph{error} and happens to be equal to the numerator of the fraction \emph{error/den} which updates the value of $K_i$ (\emph{k$\_[i]$} in the code) at every iteration. For this reason, the same variable has been used to both store the error and construct the updating of $K_i$, making the routine more efficient.\\
+The variable \emph{tol} represent the tolerance which has been here set to $10^{-6}$: the method stops once the distance between the RHS and LHS of Eqn.\eqref{eqn:Ki} is smaller than the fixed tolerance or after a fixed number of iterations (which has been chosen to be equal to $10^6$).\\
+Finally, \emph{count} represents the number of evaluations of $f$ and the derivatives of $f$ (see $\S\ref{subsubsec:models}$). Such an evaluation is required by the assignment instructions and allows to perform a basic efficiency analysis on the different methods employed.\\ 
+
+\subsubsection{models.hh file}
+\label{subsubsec:models}
+In this file a \emph{struct}, whose elements completely characterise the model at hand, is defined.
+
+\begin{lstlisting}
+struct Test
+{
+	unsigned modelNumber_;
+\end{lstlisting}
+
+The stuct contains the variable \emph{modelNumber$\_$}, which allows the user to chosse between different models to test on. Such models are indexed by means of the values $1, 2$ and $3$, with an obvious correspondence with the assignment instructions. The choice of \emph{modelNumber$\_$} equal to 3, allows to access the test problem \eqref{eqn:test-problem} in case further analyses need to be performed.\\
+The other elements of \emph{Test} are $f$, $df$, $T$ and $y_0$ and \emph{exact}, which represent the function $f$ defined in each model, its derivative, the total time of integration, the starting point and the exact solution respectively. It should now be clear what the instructions \emph{model.f} and \emph{model.df} listed in $\S$\ref{subsubsec:schemes} stands for: they allow the user to compute $f$ and its first derivative at the given point (which is given by input to model).\\
+The choice between the different models is made by means of different \emph{if} instructions. As an example, one of them is reported in the following.\\
+
+\begin{lstlisting}
+double f(double t,const double &y) const
+{
+if(modelNumber_==1) //first assignment equation
+{
+	return (1 - cos(t)*(cos(t) - 1) - y*y);
+}else if(modelNumber_==2) //second assignment equation
+{
+	double l = -0.1;
+	return (1 - cos(t)*(cos(t) - exp(l*t)) - exp(-2*l*t)*y*y + l*y);
+}else if(modelNumber_==3) //test case
+{
+	return -y;
+}else
+{ //exit with an appropriate warning
+	std::cout << "No model defined for this choice of model index. Exiting." << std::endl;
+	exit(EXIT_FAILURE);
+}
+\end{lstlisting}
+
+It is worth pointing out that, in the event of a non correct choice of the model, the program exits with an appropriate error to the user.\\
+
+\subsubsection{main.cc file}
+The main file contains the function \emph{solve} which performs the integration of the chosen equation up to $T$. The function contains an \emph{if} instruction, which enables the printing of the approximation error over time for two different step sizes, which have been chosen to be $\tau_0=0.1$ and $\tau_0=0.05$, whenever a solution for the first model is to be obtained with these time step sizes. The files are named by means of the following instruction:
+
+\begin{lstlisting}
+if( ( tau==0.1 || tau==0.05) && (model.modelNumber_ == 1) )
+{
+	std::ofstream myoutFile;
+	myoutFile.open("Error_Model_" + std::to_string(model.modelNumber_) + "_Scheme_" + std::to_string(schemeNumb) + "_tau_" + std::to_string(tau) + ".dat", std::ios::out);
+\end{lstlisting}
+
+The integration up to the time T is performed by means of repeated calls to \emph{evolve}.
+
+\begin{lstlisting}
+while ( t<=model.T() ) //up to T
+{
+	y =  scheme.evolve(y,t,tau,model, count); //one step
+	t += tau; //increment in time
+	double error = y - model.exact(t); 
+	maxError = std::max(maxError,std::abs(error));
+}
+\end{lstlisting}
+
+In case $\tau_0\neq\lbrace 0.1, 0.05\rbrace$ and the chosen model is not the first one,  the function returns the maximum error in the $L_\infty$ norm between the exact solution and the approximated one over the whole integration time $T$.\\
+
+The program accepts 4 arguments from the prompt (here the Makefile) and, whenever a different number of them is inserted, exits with an appropriate warning the user. Then, the inserted values are assigned to \emph{Test} variable and to \emph{model.modelNumber$\_$}. Moreover, a vector of pointers to DIRK is implemented.
+
+\begin{lstlisting}
+std::vector<DIRK *> schemes;
+schemes.push_back(new FE());
+schemes.push_back(new BE());
+schemes.push_back(new IM());
+schemes.push_back(new Heun3());
+schemes.push_back(new DIRK2());
+\end{lstlisting}
+
+By accessing to a suitable location of this vector, each of the RK methods can be employed. The \emph{experimental order of convergence} for each time step is printed on suitable files, named through the following instruction:
+
+\begin{lstlisting}
+std::ofstream myFile;
+myFile.open("EOCS_Model_" + std::to_string(modelNumber) + "_Scheme_" + std::to_string(schemeNumber) + "_tau_" + std::to_string(tau) + "_J_" + std::to_string(level) + ".dat", std::ios::out);
+if(!myFile.good())
+{
+	std::cout << "Failed to open the file." << std::endl;
+	exit(EXIT_FAILURE);
+}
+\end{lstlisting}
+
+As for the previous cases, if the program cannot open the file, an appropriate warning message is printed on the terminal. All the files have been made human readable for easing the reading of them by generic users.\\
+Finally, the number of evaluations of $f$ and $df$ (summed over the whole sequence of stepsizes, so that result is independent of the specific $\tau_0$ chosen) for each method is printed on the terminal every time the integration is concluded. A suitable message informing the user that the integration has ended is printed as well.\\
 
 \subsection{Running the program}
 The program is run through the Makefile provided. The current optimisation is set to -Ofast and all following tests have been performed with this optimisation choice. Every possible error or warning has been explicitly checked by means of the instruction \emph{-Wall -Wfatal-errors -pedantic} before proceeding to performing the different tests: no warnings appeared.\\
-The program generates a fixed number of output files, in which the results of the tests have been stored. Some of these files are used to produce plots by means of six different plotscripts.\\ 
+The program generates a fixed number of output files, in which the results of the tests have been stored. Some of these files are used to produce plots by means of four different plotscripts.\\ 
 
 \subsection{Testing correctness}
-In order to check the correctness of the implementation of the code, the tests requested by the assignment have been performed. The class of ADR equations chosen as a benchmark is the following:
-
-\begin{equation}
-	\label{eqn:AD}
-	-\alpha u''(x)+\beta u'(x) = 0
-\end{equation}
-
-Nonetheless, the correctness of the code for the other class of equations is easy to verify by means of changing the parameters in the main file. Such a test, whose results will not be reported here, has been successfully performed in the construction of the code.\\
-The solution to Eqn.\eqref{eqn:AD} has been discussed in detail in $\S$\ref{subsubsec:ADprob}. However, from the numerical point of view, it is important to point out how BCs imply suitable modifications of the vector $\mathbf{f}$ to invert against. In fact, if the matrix $A$ is constructed to possess $J$ columns and $J$ rows, since the discrete Laplacian and gradient operators take as arguments $x_{j+1}$ and $x_{j-1}$ for the approximation at $x_j$, the values of the function $u(x)$ at the boundary of $\Omega_h$ have to be inserted into the first and last entry of the vector $\mathbf{f}$. Such a construction is performed in the function \emph{Solver} trough the following lines:
-
-\begin{lstlisting}
-f[0] = u0_*( ( alpha_/(h*h) ) + ( beta_/(2*h) ) ); //first boundary condition
-f[J_-1] = uL_*( ( alpha_/(h*h) ) - ( beta_/(2*h) ) ); //second boundary condition
-\end{lstlisting}
-
-
-Eqn.(\ref{eqn:matrix-form}) then reads:
-
-\begin{align*}
-\hspace{-30pt}
-	\begin{pmatrix}
-	\frac{2\alpha}{h^2}+\gamma & -\frac{\alpha}{h^2}-\frac{\beta}{2h} & 0 & 0 & 0 & \cdots & 0 & 0\\
-	-\frac{\alpha}{h^2}+\frac{\beta}{2h} & \frac{2\alpha}{h^2}+\gamma & -\frac{\alpha}{h^2}-\frac{\beta}{2h} & 0 & 0 & \cdots & 0 & 0\\
-	0 & -\frac{\alpha}{h^2}+\frac{\beta}{2h} & \frac{2\alpha}{h^2}+\gamma & -\frac{\alpha}{h^2}-\frac{\beta}{2h} & 0 & \cdots & 0 & 0\\
-	\vdots & \vdots & \ddots & \ddots & \ddots & \cdots & \vdots & \vdots \\
-	0 & 0 & \cdots & \cdots & \cdots & \cdots &  \frac{2\alpha}{h^2}+\gamma & -\frac{\alpha}{h^2}-\frac{\beta}{2h}\\
-	\end{pmatrix}
-	\begin{pmatrix}
-	u_1\\
-	\vdots\\
-	\\
-	\vdots\\
-	u_{J-1}\\		
-	\end{pmatrix}
-	=
-	\begin{pmatrix}
-	u_0\left(-\frac{\alpha}{h^2}+\frac{\beta}{2h}\right)\\
-	0\\
-	\vdots\\
-	0\\
-	u_{L}\left(-\frac{\alpha}{h^2}-\frac{\beta}{2h}\right)\\		
-	\end{pmatrix}
-\end{align*}
-
-where $\mathbf{u}$ is the initial guess required by the Gauss-Seidel algorithm to work. In the present case, each component of $\mathbf{u}$ has been set to $0$, so that $u_j=0\hspace{3mm}\forall j\in\lbrace 1,\cdots, J\rbrace$.\\
-Solutions to  Eqn.\eqref{eqn:AD} have been obtained for different values of the mesh size $h=\frac{1}{J+1}$ and different values of the $\mathbb{P}_e$. The error, i.e the distance between the exact solution on the grid and the approximate one in the (discrete) $L_\infty$ norm, is computed for each solution. As previously mentioned, the logarithm of the ratio between such errors for two successive solutions of the same problem (same $\mathbb{P}_e$, but different $h$) have been computed: the reason for this will be presented in $\S$\ref{subsec:Error}.\\
-
-
-
+In order to check the correctness of the implementation of the code, the tests requested by the assignment have been performed. Test on model 1, model 2 have been performed. Nonetheless, the correctness of the code for the other class of equations is easy to verify by means of changing the parameters in the main file. Such a test, whose results will not be reported here, has been successfully performed in the construction of the code.\\
 
 \subsection{Results of the tests}
-In the following, the results of the more significant tests performed will be reported and briefly discussed. The tolerance has been set to $10^{-6}$ for each of the tests, while the values of \emph{itCheck} and \emph{MaxIter} are kept fixed to $10^4$ and $10^9$ respectively.\\
+In the following, the results of the more significant tests performed will be reported and briefly discussed.\\
 
-\subsubsection{Solutions to the AD equation}
+\subsubsection{Experimental errors of convergence}
+The experimental error of convergence for each combination of models, schemes and $\tau_0$ has been computed. As shown in the previous section, each scheme is indexed though the number of the corresponding location it occupies in the vector of pointers to DIRK. In particular, $0$ is associated with FE, $1$ is associated with BE, $2$ is associated with BE, $3$ is associated with IM, $4$ is associated with Heun3 and $5$ is associated with DIRK2.\\
+
+
+ The results are contained in the ``Errors" files, whose content is reported in the following:
+
+
+\begin{lstlisting}
+#EOCS for scheme 0, relative to model 1
+#1-tau                   2-Maximum Error          3-EOCS                   
+0.1                      0.126438                 	
+0.05                     0.035277                 1.84163
+0.025                    0.00949667               1.89323
+0.0125                   0.00304776               1.63967
+0.00625                  0.00152847               0.995661
+0.003125                 0.000765525              0.997569
+0.0015625                0.000383107              0.9987
+0.00078125               0.000191643              0.999326
+0.000390625              9.58445e-05              0.999656
+0.000195313              4.7928e-05               0.999826
+9.76563e-05              2.39654e-05              0.999913
+4.88281e-05              1.19831e-05              0.999956
+2.44141e-05              5.99164e-06              0.999978
+\end{lstlisting}
+
+\begin{lstlisting}
+#EOCS for scheme 0, relative to model 2
+#1-tau                   2-Maximum Error          3-EOCS                   
+0.1                      inf                      	
+0.05                     inf                      -nan
+0.025                    inf                      -nan
+0.0125                   inf                      -nan
+0.00625                  0.481524                 inf
+0.003125                 0.132811                 1.85823
+0.0015625                0.057307                 1.2126
+0.00078125               0.0269536                1.08823
+0.000390625              0.013101                 1.0408
+0.000195313              0.0064618                1.01967
+9.76563e-05              0.00320933               1.00967
+4.88281e-05              0.00159934               1.00479
+2.44141e-05              0.000798349              1.00239
+\end{lstlisting}
+
+Regarding the FE method, it is clear that the order of convergence of the method is one. This is in perfect agreement with the theoretical predictions. As a matter of fact, Thm.\ref{thm:order-cond-RK} guarantees that the order of consistency of the method is one: being that the method is zero-stable, its order of convergence has to be at least equal to the order of consistency.\\
+It is worth pointing out that the method appears to be non-stable (in the sense of zero stability) for time steps which are bigger than $0.00625$. This is again in perfect agreement with Def.\ref{def:zero-stability-one-step}, which defines stability for times steps smaller or equal of a fixed $h_0$: the results suggest that $h_0$ for model $2$ and the FE method is smaller than $0.0125$.\\
+
+For the BE scheme, one has:
+
+\begin{lstlisting}
+#EOCS for scheme 1, relative to model 1
+#1-tau                   2-Maximum Error          3-EOCS                   
+0.1                      0.39611                  	
+0.05                     0.055257                 2.84167
+0.025                    0.0117679                2.2313
+0.0125                   0.00310423               1.92255
+0.00625                  0.00154073               1.01062
+0.003125                 0.000768528              1.00345
+0.0015625                0.000383855              1.00154
+0.00078125               0.00019183               1.00073
+0.000390625              9.58911e-05              1.00036
+0.000195313              4.79397e-05              1.00018
+9.76563e-05              2.39684e-05              1.00009
+4.88281e-05              1.19838e-05              1.00004
+2.44141e-05              5.99181e-06              1.00002
+\end{lstlisting}
+
+\begin{lstlisting}
+#EOCS for scheme 1, relative to model 2
+#1-tau                   2-Maximum Error          3-EOCS                   
+0.1                      0.639798                 	
+0.05                     0.495569                 0.368531
+0.025                    0.358309                 0.467881
+0.0125                   0.239848                 0.579083
+0.00625                  0.148207                 0.694511
+0.003125                 0.0851809                0.79901
+0.0015625                0.0462974                0.8796
+0.00078125               0.0242502                0.93293
+0.000390625              0.0124282                0.964386
+0.000195313              0.00629377               0.981617
+9.76563e-05              0.00316733               0.990657
+4.88281e-05              0.00158885               0.995288
+2.44141e-05              0.000795727              0.997634
+\end{lstlisting}
+
+For the same reasons of the previous case, one can argue that the order of convergence is one and that such a result is in agreement with the theoretical expectation.\\
+
+In the case of the BE method, Thm.\ref{thm:order-cond-RK} guarantees that its order of consistency is 2 ($\sum_i b_ic_i$). Again, making use of its stability, one finds the experimental data to be in agreement with the theoretical predictions.\\
+
+\begin{lstlisting}
+#EOCS for scheme 2, relative to model 1
+#1-tau                   2-Maximum Error          3-EOCS                   
+0.1                      0.0585369                	
+0.05                     0.0151887                1.94635
+0.025                    0.00383395               1.9861
+0.0125                   0.00096082               1.99649
+0.00625                  0.000240347              1.99915
+0.003125                 6.00952e-05              1.9998
+0.0015625                1.50244e-05              1.99995
+0.00078125               3.75613e-06              1.99999
+0.000390625              9.39042e-07              1.99999
+0.000195313              2.3469e-07               2.00044
+9.76563e-05              5.86338e-08              2.00095
+4.88281e-05              1.49431e-08              1.97226
+2.44141e-05              3.88959e-09              1.94179
+\end{lstlisting}
+
+\begin{lstlisting}
+#EOCS for scheme 2, relative to model 2
+#1-tau                   2-Maximum Error          3-EOCS                   
+0.1                      0.209799                 	
+0.05                     0.072592                 1.53112
+0.025                    0.0203654                1.83369
+0.0125                   0.00526223               1.95237
+0.00625                  0.00132671               1.98782
+0.003125                 0.000332426              1.99675
+0.0015625                8.31018e-05              2.00008
+0.00078125               2.07828e-05              1.99949
+0.000390625              5.19649e-06              1.99978
+0.000195313              1.29881e-06              2.00035
+9.76563e-05              3.24474e-07              2.00101
+4.88281e-05              8.2711e-08               1.97195
+2.44141e-05              2.16242e-08              1.93543
+\end{lstlisting}
+
+Regarding the Heun3 scheme, following the same line of reasoning of the previous cases, it is possible to argue that, in agreement with the theoretical predictions, the order of consistency is equal to 3.\\
+
+\begin{lstlisting}
+#EOCS for scheme 3, relative to model 1
+#1-tau                   2-Maximum Error          3-EOCS                   
+0.1                      0.000312788              	
+0.05                     1.96209e-05              3.99473
+0.025                    1.22761e-06              3.99847
+0.0125                   8.95918e-08              3.77634
+0.00625                  1.10018e-08              3.02563
+0.003125                 1.36331e-09              3.01255
+0.0015625                1.69549e-10              3.00733
+0.00078125               2.2073e-11               2.94135
+0.000390625              1.39465e-11              0.662379
+0.000195313              6.74928e-11              -2.27483
+9.76563e-05              5.50014e-11              0.295266
+4.88281e-05              2.70395e-10              -2.29753
+2.44141e-05              2.21423e-10              0.288268
+\end{lstlisting}
+
+\begin{lstlisting}
+#EOCS for scheme 3, relative to model 2
+#1-tau                   2-Maximum Error          3-EOCS                   
+0.1                      0.00208592               	
+0.05                     6.50329e-05              5.00337
+0.025                    4.32878e-06              3.90914
+0.0125                   1.31976e-06              1.71369
+0.00625                  2.13607e-07              2.62724
+0.003125                 2.97629e-08              2.84337
+0.0015625                3.9283e-09               2.92154
+0.00078125               4.06131e-10              3.27389
+0.000390625              1.98413e-11              4.35537
+0.000195313              3.85861e-10              -4.28151
+9.76563e-05              3.31035e-10              0.221099
+4.88281e-05              1.50893e-09              -2.18847
+2.44141e-05              1.31991e-09              0.193087
+\end{lstlisting}
+
+It is worth noticing that the experimental order of convergence (eoc) goes becomes negative for small enough step size: this behaviour is somewhat expected and signals a saturation of the method performances with the reduction of the step size. The eoc is closer to zero and becomes negative: this signals the aformentioned phenomenon with the maximum error that can become even a greater for smaller stepsizes.\\
+
+Finally, the results for the DIRK2 method are presented.\\
+
+\begin{lstlisting}
+#EOCS for scheme 3, relative to model 1
+#1-tau                   2-Maximum Error          3-EOCS                   
+0.1                      0.000312788              	
+0.05                     1.96209e-05              3.99473
+0.025                    1.22761e-06              3.99847
+0.0125                   8.95918e-08              3.77634
+0.00625                  1.10018e-08              3.02563
+0.003125                 1.36331e-09              3.01255
+0.0015625                1.69549e-10              3.00733
+0.00078125               2.2073e-11               2.94135
+0.000390625              1.39465e-11              0.662379
+0.000195313              6.74928e-11              -2.27483
+9.76563e-05              5.50014e-11              0.295266
+4.88281e-05              2.70395e-10              -2.29753
+2.44141e-05              2.21423e-10              0.288268
+\end{lstlisting}
+
+\begin{lstlisting}
+#EOCS for scheme 3, relative to model 2
+#1-tau                   2-Maximum Error          3-EOCS                   
+#1-tau                   2-Maximum Error          3-EOCS                   
+0.1                      0.00280051               	
+0.05                     0.000764064              1.87393
+0.025                    0.000154804              2.30325
+0.0125                   2.26948e-05              2.77001
+0.00625                  3.21506e-06              2.81945
+0.003125                 4.45826e-07              2.85029
+0.0015625                1.01866e-07              2.1298
+0.00078125               1.11012e-08              3.19789
+0.000390625              1.31348e-09              3.07925
+0.000195313              5.51304e-10              1.25248
+9.76563e-05              3.51625e-10              0.648811
+4.88281e-05              1.50797e-09              -2.1005
+2.44141e-05              1.32134e-09              0.190605
+\end{lstlisting}
+
+Once again, the order of convergence has to be at least two. Being that maximum errors are closer to the ones of the Heun3 method, the order of convergence is expected to be closer to 3, in agreement with theoretical predictions.\\
+
+
+
 The \emph{ADR$\_$test} function has been shown to work correctly for the following  P\'{e}clet numbers:
 $$\mathbb{P}_e=\lbrace 0.0000, 0.0005, 0.0100, 1.0000, 10.5000 \rbrace$$
 The solutions $u\_x$ obtained for the different , indexed by the respective $J$, can be found in the files $P\_numb\_...\_Solution\_J\_....txt$ , where the dots stand for the different possible values of $\mathbb{P}_e$ and $J$. The residual error at every iteration, in the $L_\infty$ norm, is stored in the files $P\_numb\_...\_Residual\_J\_....txt$, which provide a direct proof of the general correctness of the code.\\

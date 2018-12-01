@@ -1,4 +1,4 @@
-#Error for scheme 0, relative to model 2
+#EOCS for scheme 0, relative to model 2
 #1-tau                   2-Maximum Error          3-EOCS                   
 0.1                      inf                      	
 0.05                     inf                      -nan
@@ -12,3 +12,4 @@
 0.000195313              0.0064618                1.01967
 9.76563e-05              0.00320933               1.00967
 4.88281e-05              0.00159934               1.00479
+2.44141e-05              0.000798349              1.00239

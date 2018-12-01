@@ -10,7 +10,6 @@
 struct Test
 {
   unsigned modelNumber_;
-  double l = -0.1;
   double f(double t,const double &y) const
   {
     if(modelNumber_==1) //first assignment equation
@@ -18,10 +17,11 @@ struct Test
       return (1 - cos(t)*(cos(t) - 1) - y*y);
     }else if(modelNumber_==2) //second assignment equation
     {
-      return (1 - cos(t)*(cos(t) - exp(l*t)) - exp(-2*l*t)*y*y + l*y); //f(t,y) = -y . So we have the equation y' = f(t,y) = -y
+      double l = -0.1;
+      return (1 - cos(t)*(cos(t) - exp(l*t)) - exp(-2*l*t)*y*y + l*y);
     }else if(modelNumber_==3) //test case
     {
-      return -y; //f(t,y) = -y . So we have the equation y' = f(t,y) = -y
+      return -y;
     }else
     { //exit with an appropriate warning
       std::cout << "No model defined for this choice of model index. Exiting." << std::endl;
@@ -35,6 +35,7 @@ struct Test
       return -2*y;
     }else if(modelNumber_==2) //second assignment equation
     {
+      double l = -0.1;
       return ( -2*y*exp(-2*l*t) + l );
     }else if(modelNumber_==3) //test case
     {
@@ -84,10 +85,11 @@ struct Test
       return sin(t);
     }else if(modelNumber_==2) //second assignment equation
     {
+      double l = -0.1;
       return exp(l*t)*sin(t);
     }else if(modelNumber_==3) //test case
     {
-      return exp(-t); //f(t,y) = -y . So we have the equation y' = f(t,y) = -y
+      return exp(-t);
     }else
     { //exit with an appropriate warning
       std::cout << "No model defined for this choice of model index. Exiting." << std::endl;
