@@ -1,23 +1,21 @@
 # generated files
-#TEX=u1894945-assignment2.tex
-#PLOTSCRIPTS=plotscript1.gpl plotscript2.gpl plotscript3.gpl plotscript4.gpl plotscript5
+TEX=u1894945-assignment3.tex
 PLOTSCRIPTS=plotscript1.gpl plotscript2.gpl plotscript3.gpl plotscript4.gpl
 RESULTS=EOCS_Model_1_Scheme_0_tau_0.100000_J_12.dat EOCS_Model_2_Scheme_0_tau_0.100000_J_12.dat EOCS_Model_1_Scheme_1_tau_0.100000_J_12.dat EOCS_Model_2_Scheme_1_tau_0.100000_J_12.dat EOCS_Model_1_Scheme_2_tau_0.100000_J_12.dat EOCS_Model_2_Scheme_2_tau_0.100000_J_12.dat EOCS_Model_1_Scheme_3_tau_0.100000_J_12.dat EOCS_Model_2_Scheme_3_tau_0.100000_J_12.dat EOCS_Model_1_Scheme_4_tau_0.100000_J_12.dat EOCS_Model_2_Scheme_4_tau_0.100000_J_12.dat Error_Model_1_Scheme_0_tau_0.050000.dat Error_Model_1_Scheme_1_tau_0.050000.dat Error_Model_1_Scheme_2_tau_0.050000.dat Error_Model_1_Scheme_3_tau_0.050000.dat Error_Model_1_Scheme_4_tau_0.050000.dat Error_Model_1_Scheme_0_tau_0.100000.dat Error_Model_1_Scheme_1_tau_0.100000.dat Error_Model_1_Scheme_2_tau_0.100000.dat Error_Model_1_Scheme_3_tau_0.100000.dat Error_Model_1_Scheme_4_tau_0.100000.dat
 PROGRAM=myprogram
 OBJS=main.cc
 PLOTS=ME_M1.pdf ME_M2.pdf Err_vs_t_05.pdf Err_vs_t_1.pdf
-#PLOTS=Err_FE.pdf Err_BE.pdf Err_IM.pdf Err_Heun3.pdf Err_DIRK2.pdf
-#REPORT=u1894945-assignment2.pdf
+REPORT=u1894945-assignment3.pdf
 # additional variables
 CPPFLAGS=-std=c++11
 #CPPFLAGS=-std=c++11 -g
 
 
-all: $(PLOTS)
+all: $(REPORT)
 
-#$(REPORT): $(PLOTS) $(TEX)
-	#pdflatex -interaction=batchmode u1894945-assignment2.tex
-	#pdflatex -interaction=batchmode u1894945-assignment2.tex
+$(REPORT): $(PLOTS) $(TEX)
+	pdflatex -interaction=batchmode u1894945-assignment3.tex
+	pdflatex -interaction=batchmode u1894945-assignment3.tex
 
 $(PLOTS): $(RESULTS) $(PLOTSCRIPTS)
 	gnuplot plotscript1.gpl
@@ -38,9 +36,11 @@ $(RESULTS): $(PROGRAM)
 	./$(PROGRAM) 1 4 0.1 12
 	./$(PROGRAM) 2 4 0.1 12
 
-#g++ -O3 -Wall -Wfatal-errors -pedantic $(CPPFLAGS) $(OBJS) -o $(PROGRAM)
+#g++ -Ofast -Wall -Wfatal-errors -pedantic $(CPPFLAGS) $(OBJS) -o $(PROGRAM)
+#g++ -O1 -Wall -Wfatal-errors -pedantic $(CPPFLAGS) $(OBJS) -o $(PROGRAM)
 $(PROGRAM): $(OBJS)
 	g++ -Ofast -Wall -Wfatal-errors -pedantic $(CPPFLAGS) $(OBJS) -o $(PROGRAM)
+
 
 
 #g++ -O3 -Wall -Wfatal-errors -pedantic $(CPPFLAGS) -c $^ -o $@

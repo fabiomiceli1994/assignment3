@@ -96,6 +96,7 @@ public:
 	b_[0] = 1.;
 	c_[0] = 0.;
   }
+
 };
 
 class BE: public DIRK

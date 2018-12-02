@@ -872,43 +872,59 @@ Unsurprisingly, the most performant method is the FE method. This can be underst
 In this section some additional comments and observation are presented.
 
 \subsection{Memory}
-As for the previous assignment, possible memory leaks have been checked.with the help of the software \emph{valgrind}, To do this, it is necessary to compile with \emph{-g} and \emph{-O1} optimisation. After having compiled the program, the following instruction has been used:
+As for the previous assignment, possible memory leaks have been checked.with the help of the software \emph{valgrind}, To do this, it is necessary to compile with \emph{-g} and \emph{-O1} optimisation. After having compiled the program, the following instruction has been used ():
 
 
 \begin{lstlisting}
-$ valgrind --leak-check=yes ./adr
+$ valgrind --leak-check=yes ./myprogram 1 0 0.1 12
 \end{lstlisting}
 
+In the present case the parameters refer to the case of model 1, FE scheme, $\tau_0=0.1$ and $J=12$.\\
 
 The following output has been produced on the terminal:
 
 \begin{verbatim}
-==31379== Memcheck, a memory error detector
-==31379== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==31379== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
-==31379== Command: ./adr
-==31379==
-==31379== HEAP SUMMARY:
-==31379==     in use at exit: 0 bytes in 0 blocks
-==31379==   total heap usage: 244,730 allocs, 244,730 frees, 130,033,803 bytes allocated
-==31379==
-==31379== All heap blocks were freed -- no leaks are possible
-==31379==
-==31379== For counts of detected and suppressed errors, rerun with: -v
-==31379== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==4559== Memcheck, a memory error detector
+==4559== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==4559== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==4559== Command: ./myprogram 1 0 0.1 12
+==4559== 
+Solved Model 1 with scheme 0
+Number of calls to f function and df function : 514661
+==4559== 
+==4559== HEAP SUMMARY:
+==4559==     in use at exit: 0 bytes in 0 blocks
+==4559==   total heap usage: 514,706 allocs, 514,706 frees, 4,221,808 bytes allocated
+==4559== 
+==4559== All heap blocks were freed -- no leaks are possible
+==4559== 
+==4559== For counts of detected and suppressed errors, rerun with: -v
+==4559== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 \end{verbatim}
 
-One can clearly see that no memory has been lost. This is however not surprising since no memory was dynamically allocated by the program and the correctness of the constructor for the SparseMatrix class was checked in the previous assignment.\\
+One can clearly see that no memory has been lost. Hence, the instruction:
+
+\begin{lstlisting}
+for (const auto& r : (schemes)) //freeing memory
+{
+	delete r;
+}
+\end{lstlisting}
+
+works perfectly.\\
 
 \subsection{Performances}
 \label{subsec:perf}
 Performances can be checked through the following commands:
 \begin{verbatim}
-$ valgrind --tool=callgrind ./adr
+$ valgrind --tool=callgrind ./myprogram 1 0 0.1 12
 $ kcachegrind
 \end{verbatim}
 
-The first command analyses the perfomances in the terms of load distrubution, while \emph{kcachegrind} is used to visualise the load distribution results. Differently from the previous case, performances depend on the code of the first assignment. The functions called within \emph{ADR$\_$Test} and \emph{Solver} are the ones taking up the majority of the time needed: unsurprisingly, \emph{Gauss-Seidel} is the most ``time-consuming" of them.\\
+where the parameters inserted from terminal have to be changed according to the desired model, scheme, initial step size and number eocs computed. In the present case the parameters refer to the case of model 1, FE scheme, $\tau_0=0.1$ and $J=12$.  
+
+The first command analyses the perfomances in the terms of load distrubution, while \emph{kcachegrind} is used to visualise the load distribution results.\\
+Unsurprisingly, the most ``time-consuming" function of the code them appears to be \emph{solve}.\\
 
 
 \cleardoublepage

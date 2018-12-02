@@ -100,7 +100,7 @@ int main ( int argc, char **argv )
   schemes.push_back(new Heun3());
   schemes.push_back(new DIRK2());
 
-  std::vector<double> maxErrors(level);
+  std::vector<double> maxErrors(level+1); //+1 because I compute level times the eocs and the first iteration cannot compute it
 
   std::ofstream myFile;
   myFile.open("EOCS_Model_" + std::to_string(modelNumber) + "_Scheme_" + std::to_string(schemeNumber) + "_tau_" + std::to_string(tau) + "_J_" + std::to_string(level) + ".dat", std::ios::out);
@@ -135,5 +135,11 @@ int main ( int argc, char **argv )
   std::cout << "Solved Model " << modelNumber << " with scheme " << schemeNumber << std::endl;
   std::cout << "Number of calls to f function and df function : " << count << std::endl;
   myFile.close();
+
+  for (const auto& r : (schemes)) //freeing memory
+  {
+    delete r;
+  }
+
   return 0;
 }
