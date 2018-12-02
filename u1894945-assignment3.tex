@@ -838,115 +838,50 @@ Finally, the results for the DIRK2 method are presented.\\
 
 Once again, the order of convergence has to be at least two. Being that maximum errors are closer to the ones of the Heun3 method, the order of convergence is expected to be closer to 3, in agreement with theoretical predictions.\\
 
+In order to have a simpler visualisation of the dependence of the maximum approximation error on the time step, the following plots have been produced. By means of plotting the theoretical profiles $\tau$, $\tau^2$ and $\tau^3$ on the same plots, a direct confirmation of the previous results can be obtained.\\
 
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=1.0\textwidth]{ME_M1}
+	\end{center}
+	\caption{Graphical representation of the dependence of the maximum approximation error on the different time steps for model 1.
+		\label{fig:Err_M1}}
+\end{figure}
 
-The \emph{ADR$\_$test} function has been shown to work correctly for the following  P\'{e}clet numbers:
-$$\mathbb{P}_e=\lbrace 0.0000, 0.0005, 0.0100, 1.0000, 10.5000 \rbrace$$
-The solutions $u\_x$ obtained for the different , indexed by the respective $J$, can be found in the files $P\_numb\_...\_Solution\_J\_....txt$ , where the dots stand for the different possible values of $\mathbb{P}_e$ and $J$. The residual error at every iteration, in the $L_\infty$ norm, is stored in the files $P\_numb\_...\_Residual\_J\_....txt$, which provide a direct proof of the general correctness of the code.\\
-Finally, the distance between the exact solution and the approximate one, in the (discrete) $L_\infty$ is printed on \emph{Errors$\_$P$\_$numb$\_$...txt} files. Unsurprisingly, the error becomes smaller as the mesh size decreases.\\
-The correctness of the algorithm has been tested for different values of $h$, as required by the assignment. The values of the mesh size have been chosen to be:
-\begin{align}
-	\label{eqn:h-choice}
-	h=\lbrace10, 20, 40, 80, 160, 320, 640\rbrace
-\end{align}
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=1.0\textwidth]{ME_M2}
+	\end{center}
+	\caption{Graphical representation of the dependence of the maximum approximation error on the different time steps for model 2.
+		\label{fig:Err_M2}}
+\end{figure}
 
-Keeping the P\'{e}clet number fixed, solutions have been obtained for all the previous mesh sizes.\\ 
+The plots confirm what has been previously stated through Thm.\ref{thm:zero-stability} and Thm.\ref{thm:order-cond-RK}. As a matter of fact, the good agreement between the $\tau$ and the profiles obtained for the FE and BE methods is clearly observable in Fig.\ref{fig:Err_M1} and Fig.\ref{fig:Err_M2}. It is also clear that the convergence error of the IM method is equal to 2. Moreover, the plots confirm what has been said above about the order of convergence of the DIRK2 method: its profile appears to be in good agreement with the theoretical profile $\tau^3$ and with the Heun3 one.\\
 
+\subsubsection{Approximation error over time}
+The approximation error, computed in the $L_\infty$ norm, has been studied as a function of the integration time for model 1 for two different step sizes, i.e. $h=0.1$ and $h=0.05$. The results are reported in the two following plots:
 
-\subsubsection{Small P\'{e}clet numbers}
-Solutions to to Eqn.\eqref{eqn:AD} have been studied in the case of small $\mathbb{P}_e$, as required by the assignment. The obtained results are reported in the following plots.
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.85\textwidth]{Err_vs_t_1}
+	\end{center}
+	\caption{Graphical representation of the dependence of the approximation error on time for for model 1 and $h=0.1$.
+		\label{fig:Err_vs_t_0_1}}
+\end{figure}
 
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.85\textwidth]{Err_vs_t_05}
+	\end{center}
+	\caption{Graphical representation of the dependence of the approximation error on time for for model 2 and $h=0.05$.
+		\label{fig:Err_vs_t_0_05}}
+\end{figure}
 
-The solutions appear to be straight lines on the interval $[0, 1]$. Remembering what has been discussed in $\S$\ref{subsubsec:ADprob}, such a result does not appear surprising: Fig.\ref{fig:P_0.0005} and Fig.\ref{fig:P_0.01} are in good agreement with the Taylor expansion performed in Eqn.\eqref{key:AD-smallP}. Finally, Fig.\ref{fig:P_0} shows that the code is able to find the correct solution to the problem also in the case of $\beta=0$. In fact, under these circumstances, Eqn.\eqref{eqn:AD} simplifies to:
+Similar curves are observed in the plots. As expected, the error grows with time, even if, for specific and small time intervals, a decreasing profile is present.\\
 
-$$-\alpha u''(x)=0$$
-
-which, for the given BCs, admits the unique solution $u(x)=x$.\\
-
-\subsubsection{P\'{e}clet number close or equal to 1}
-Solutions to Eqn.\eqref{eqn:AD} have been studied in the case $\alpha=0.25, \beta=0.5$ as well. Such a choice of the parameters results in $\mathbb{P}_e=1$. The result is reported in the following plot.
-
-The exponential behaviour of the solution is now evident. In fact, in the present case, the Taylor expansion of the exponential function around 0 cannot be truncated after the first term being that $\frac{\beta}{\alpha}=1$.\\
-Solutions overlap in this case as well, but small differences between them are noticeable for big enough $ j $: by means of a suitable zoom on the plot, it is possible to see that the red and blue curve present a slightly different profile.\\
-Fig.\ref{fig:P_1} indirectly provides a proof of the correctness of the analysis performed in $\S$\ref{subsubsec:ADprob}. Not only in the present situation it is not possible to perform an expansion about $0$ of the exponential, but also it is not possible to use the approximation performed for large $\mathbb{P}_e$, as confirmed by the absence of boundary layers in the plot.\\
-
-\subsubsection{Large P\'{e}clet number}
-Finally, solutions to Eqn.\eqref{eqn:AD} have been studied in the case of large $\mathbb{P}_e$. The results are reported in the following plot.
-
-
-
-The presence of a wide boundary layer is noticeable: all solutions stay equal to naught for $0\le x < 0.8$ and then reach $1$.\\
-
-The choice of the values of $\alpha$ and $\beta$ has been made through the following criterion.\\
-A sufficient condition for the Gauss-Seidel method to converge is that the matrix $A$ which the algorithm has to invert is strictly diagonally dominant (see \cite{numerical-math}). In the present case, such a condition is satisfied if:
-
-$$\left\|\frac{2\alpha}{h^2}\right\|> \left\|\frac{\alpha}{h^2}+\frac{\beta}{2h}\right\| + \left\|-\frac{\alpha}{h^2}+\frac{\beta}{2h}\right\|$$
-
-However:
-
-$$\left\|\frac{\beta}{h}\right\|= \left\|-\frac{\alpha}{h^2}+\frac{\beta}{2h}+\frac{\alpha}{h^2}+\frac{\beta}{2h}\right\|$$
-
-So that, in order to have strict diagonally dominance, it must be:
-
-$$\left\|\frac{\beta}{h}\right\|<\left\|\frac{2\alpha}{h^2}\right\|$$
-
-Hence, for $L=1$, remembering that $h=\frac{1}{J+1}$, one has that a sufficient condition for the Gauss-Seidel method to converge is:
-
-$$J>\mathbb{P}_e-1$$
-
-The choice of $\alpha=1.0$ and $\beta=21.0$ satisfy the above condition. It was explicitly checked during the construction of the program that the choice of a great $\beta$ (e.g. $\beta=1000$) does not allow the algorithm to converge and the program exits with an appropriate warning to the user. Clearly, large values of $\beta$ can be tested with $J$ large enough to make the previous inequality satisfied.\\
-
-\subsection{Error analysis and order of convergence}
-\label{subsec:Error}
-As required by the assignment, solutions errors have been computed and analysed. Not surprisingly, the distance between analytical and the approximate solution becomes smaller when the mesh size decreases. The study of such errors becomes of great importance to determine the order of convergence of the method. Assume the FD method here used is convergent of order p, then:
-
-$$\left\|\frac{r_hu-u}{r_{\frac{h}{2}}u-u}\right\|_{\bar{\mathbb{U}}_h}=\frac{Ch^p+\mathcal{O}(h^{p+1})}{C\left(\frac{h}{2}\right)^p+\mathcal{O}(h^{p+1})}= 2^p+\mathcal{O}(h)$$
-
-Passing to the logarithms:
-
-\begin{align}
-	\label{eqn:log-conv}
-	\log_2\left\|\frac{r_hu-u}{r_{\frac{h}{2}}u-u}\right\|_{\bar{\mathbb{U}}_h}=p+\mathcal{O}(h)
-\end{align}
-
-The order of convergence of a method can thus be evaluated by means of studying the behaviour of the distance in the $\bar{\mathbb{U}}_h$ norm between the discretised and the exact solution to a given problem.\\
-The choice of progressively reducing by a factor 2 the values of $h$ (see Eqn.\eqref{eqn:h-choice}) should now appear clear: such a choice guarantees that the data are uniformly distributed on a logarithmic scale, which, in turn, makes the analysis of the errors simpler.\\
-As already mentioned, in the present case the (discrete) $L_{\infty}$ (see \cite{lec-notes}) norm has been chosen.\\
-
-
-Fig.\ref{fig:errors} shows a clear dependence of the error empirical profiles on the P\'{e}clet number. In particular, it is apparent that when $\mathbb{P}_e<<1$ the error scales approximatively uniformly on a logarithmic scale with respect to $ h $.\\
-For $\mathbb{P}_e\ge 1$ the empirical profiles become very similar to the analytical $h^2$ one, suggesting that the order of convergence of the method is equal to 2. The curve obtained in the case of $\mathbb{P}_e=1$ shows another interesting feature, i.e. the presence of a \emph{plateau} for small $h$ values. This is, however, is not surprising: the error cannot become arbitrarly small when the mesh size decreases and a saturation of the performances of the method for small enough $h$ is expected. As a matter of fact, a saturation for large values of the mesh size is expected as well: such a region, however, is not extremely interesting from a numerical point of view (it is just signalling that the choice of the mesh size has not been made optimally) and has not been investigated.\\
-A more precise analysis can be performed through the data contained in the file \emph{Errors$\_$P$\_$numb$\_$10.500000.txt}, which is reported in the following:
-\\
-\\
-\\
-\\
-\\
-
-  
-\begin{lstlisting}
-Details of numerical method for ADR equation through Gauss-Seidel algorithm for alpha=1, beta=21, gamma=0.
-#1-Mesh size             2-Error (LinfNorm)       3-log2(Error Ratios)     
-0.1                      0.146847                 	                        
-0.05                     0.0384623                1.93279                  
-0.025                    0.0086967                2.14491                  
-0.0125                   0.00212548               2.03268                  
-0.00625                  0.000528445              2.00797                  
-0.003125                 0.00013208               2.00034                  
-0.0015625                3.30134e-05              2.00029 
-\end{lstlisting}
-
-
-The third column of the file contains the results of Eqn.\eqref{eqn:log-conv} for $\mathbb{P}_e=10.500$. It is evident that the method has indeed order of convergence 2.\\
-By means of computing the empirical mean and standard error of the numerical results obtained, one has:
-
-\begin{align}
-	\label{eqn:order-of-convergence}
-	O_c = 2.02 \pm 0.07
-\end{align} 
-
-where $O_c$ represents the order of convergence of the method.\\
-The result is justifiable through Thm.\ref{thm:stab-conv}, which, as already pointed out, shows that, for stable methods, the order of convergence is at least the order of consistency of the method.
+\subsubsection{Efficiency of the methods}
+A basic analysis of the performance of each of the methods is performed by means computing the number of times $f$ and $df$ are computed for each method. The results are output on the terminal so that a generic user can easily assess and verify them.\\
+Unsurprisingly, the most performant method is represented by the FE method. This can be understood by noticing that method is an explicit one-stage method: usage of Newton's method is not required by the time evolution and the total number of evaluations of $f$ and $df$ is the minimum possible since no loops over $s$, $s$ being the number of stages of the method, is performed.\\
 
 \section{Conclusive remarks}
 In this section some additional comments and observation are presented.

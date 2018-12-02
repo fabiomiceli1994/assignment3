@@ -15,10 +15,8 @@
 \contentsline {subsection}{\numberline {2.3}Testing correctness}{12}{subsection.2.3}
 \contentsline {subsection}{\numberline {2.4}Results of the tests}{12}{subsection.2.4}
 \contentsline {subsubsection}{\numberline {2.4.1}Experimental errors of convergence}{12}{subsubsection.2.4.1}
-\contentsline {subsubsection}{\numberline {2.4.2}Small P\'{e}clet numbers}{17}{subsubsection.2.4.2}
-\contentsline {subsubsection}{\numberline {2.4.3}P\'{e}clet number close or equal to 1}{17}{subsubsection.2.4.3}
-\contentsline {subsubsection}{\numberline {2.4.4}Large P\'{e}clet number}{18}{subsubsection.2.4.4}
-\contentsline {subsection}{\numberline {2.5}Error analysis and order of convergence}{18}{subsection.2.5}
+\contentsline {subsubsection}{\numberline {2.4.2}Approximation error over time}{18}{subsubsection.2.4.2}
+\contentsline {subsubsection}{\numberline {2.4.3}Efficiency of the methods}{20}{subsubsection.2.4.3}
 \contentsline {section}{\numberline {3}Conclusive remarks}{20}{section.3}
 \contentsline {subsection}{\numberline {3.1}Memory}{20}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Performances}{21}{subsection.3.2}
