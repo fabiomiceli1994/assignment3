@@ -18,10 +18,18 @@ printed on the terminal for the user.
 Every time the program is run the arguments have to be inserted in following
 order after the "./myprogram" instruction:
 "scheme number" "model number" "tau_0" "J"
-For the choice of the corresponding values the user can consult the assignment
-sheet provided.
+In particular:
+- to test with FE insert 0;
+- to test with BE insert 1;
+- to test with IM insert 2;
+- to test with Heun3 insert 3;
+- to test with DIRK2 insert 4.
+Moreover:
+- model 1 is selected inserting 1;
+- model 2 is selected inserting 2;
+- test problem is selected by inserting 3.
 Along with the success message printed on the terminal everytime the code is
-run correctly, the number of calls to f and df for model 1 and tau_0 = 0.1 and
-tau_0.05 is printed.
+run correctly, the number of calls to f and df for model 1 and tau_0 = 0.1 or
+tau_0=0.05 is printed.
 4 different plotscripts are provided and the final .tex document is generated
 automatically through them by the Makefile.

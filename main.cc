@@ -94,11 +94,11 @@ int main ( int argc, char **argv )
   Test model;
   model.modelNumber_= modelNumber;
   std::vector<DIRK *> schemes;
-  schemes.push_back(new FE());
-  schemes.push_back(new BE());
-  schemes.push_back(new IM());
-  schemes.push_back(new Heun3());
-  schemes.push_back(new DIRK2());
+  schemes.push_back(new FE()); // selected by 0
+  schemes.push_back(new BE()); // selected by 1
+  schemes.push_back(new IM()); // selected by 2
+  schemes.push_back(new Heun3()); // selected by 3
+  schemes.push_back(new DIRK2()); // selected by 4
 
   std::vector<double> maxErrors(level+1); //+1 because I compute level times the eocs and the first iteration cannot compute it
 
@@ -129,7 +129,7 @@ int main ( int argc, char **argv )
       myFile << std::left << "\t" << std::endl;
     }else
     {
-      myFile << std::left << log(maxErrors[i]/maxErrors[i-1])/log(0.5) << std::endl; //prints the EOCS
+      myFile << std::left << log(maxErrors[i]/maxErrors[i-1])/log(0.5) << std::endl; //prints the EOC
     }
   }
   std::cout << "Solved Model " << modelNumber << " with scheme " << schemeNumber << std::endl;

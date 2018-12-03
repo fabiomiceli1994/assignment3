@@ -149,7 +149,7 @@ Stability can be formulated in the following way.
 	z(t_0)=y_0+\delta_0
 	\end{cases}
 	\end{align}
-	where both the initial condition and the function $f$ are perturbed. IVP (\ref{def:Cauchy-prob}) is stable, if for any perturbation $(\delta_0, \delta(t))$ staisfying $|\delta_0|<\varepsilon$, $|\delta(t)|<\varepsilon\hspace{3mm}\forall t\in I$, $\varepsilon$ being small enough to guarantee a unique solution for the problem still exists, $\exists$ $C>0$ such that 
+	where both the initial condition and the function $f$ are perturbed. IVP (\ref{def:Cauchy-prob}) is stable, if for any perturbation $(\delta_0, \delta(t))$ satisfying $|\delta_0|<\varepsilon$, $|\delta(t)|<\varepsilon\hspace{3mm}\forall t\in I$, $\varepsilon$ being small enough to guarantee a unique solution for the problem still exists, $\exists$ $C>0$ such that 
 	
 	$$|y(t)-z(t)|<C\varepsilon\hspace{5mm}\forall t\in I$$ 
 \end{definition}
@@ -157,7 +157,7 @@ Stability can be formulated in the following way.
 It is worth making note that the Lipschitz property of $f$ implies stability of Problem (\ref{def:Cauchy-prob}), as it can be shown by means of the Gronwall lemma.\\
 
 \subsection{One-step methods}
-In the following, the integration interval $I=[t_0, t_0+T]$ will be discretised with $N$ evenly spaced intervals $I_n=[t_n, t_{n+1}]$ , where $t_n=t_0+nh$. The quantity $h=|I_n|$ is called the discretisation stepsize. It is worth making notice that it has not been required that $h=\frac{T}{N}$, i.e. it is possible that $t_N\ge t_0 + T$.
+In the following, the integration interval $I=[t_0, t_0+T]$ will be discretised with $N$ evenly spaced intervals $I_n=[t_n, t_{n+1}]$ , where $t_n=t_0+nh$. The quantity $h=|I_n|$ is called the discretisation stepsize. It is worth making notice that it has not been required that $h=\frac{T}{N}$, i.e. it is possible that $t_N\le t_0 + T$.
 At each node $t_i$, let $u_i$ be the approximation of the solution $y(t_i)=y_i$. Additionally, denote $f(t_i,u_i)=f_i$.\\
 
 \begin{definition}
@@ -243,7 +243,7 @@ The following definition is also of extreme importance for numerical IVPs.
 	\label{def:consistency}
 	A method is said to be consistent if:
 	$$\tau(h)\rightarrow 0\hspace{3mm}\text{for}\hspace{3mm}h\rightarrow 0$$
-	Moreover, a scheme (scheme and method will be frequently interchanged in the present assignment) has a consistency order $p$ if:
+	Moreover, a scheme (the words scheme and method will be frequently interchanged) has a consistency order p if:
 	$$\tau(h)=\mathcal{O}(h^p)\hspace{3mm}\text{for}\hspace{3mm}h\rightarrow 0$$
 \end{definition}
 
@@ -251,7 +251,7 @@ One can now introduce the following.
 
 \begin{definition}
 	\label{def:zero-stability-one-step}
-	A one-step method is zero-stable if $\exists h>0$, $\exists C>0$ such that $\forall h\in (0, h_0]$, $\forall\varepsilon>0$ sufficiently small:
+	A one-step method is zero-stable if $\exists h_0>0$, $\exists C>0$ such that $\forall h\in (0, h_0]$, $\forall\varepsilon>0$ sufficiently small:
 	
 	$$|\delta_n|\le\varepsilon\implies |z_n-u_n|\le C\varepsilon$$
 	
@@ -285,7 +285,7 @@ One can now introduce the following.
 	
 	$$|\Phi(t_n, u_n, f(t_n, u_n);h)-\Phi(t_n, z_n,f(t_n, z_n);h)|\le\Lambda|u_n-z_n|$$
 	
-	for $0\le n\le N$, i.e. that $\Phi$ is Lipschitz continuous with respect to its second argument. Then the one-step method is zero-stable.\\
+	for $0\le n< N$, i.e. that $\Phi$ is Lipschitz continuous with respect to its second argument. Then the one-step method is zero-stable.\\
 \end{theorem}
 
 \begin{proof}
@@ -315,7 +315,7 @@ One can now introduce the following.
     
     \begin{align}
     	\label{eqn:convergence-one-step}
-    	|y_n-u_n|\le\left(|y_0-u_0|)+nh\tau (h)\right)e^{nh\Lambda},\hspace{5mm}1\le n\le N
+    	|y_n-u_n|\le\left(|y_0-u_0|+nh\tau (h)\right)e^{nh\Lambda},\hspace{5mm}1\le n\le N
     \end{align}
     
     Moreover, if the one-step method has consistency order p and $|y_0-u_0|=\mathcal{O}(h^p)$, then the method is also convergent with order p.\\
@@ -327,8 +327,8 @@ One can now introduce the following.
 
 \subsection{Absolute stability}
 In opposition to the property of zero-stability, the concept of absolute stability can be introduced. Loosely, a numerical method is absolutely stable if, for a fixed stepsize
-$h$, $u_n$ remains bounded as we let $t_n\rightarrow\infty$. In short, for absolute stability, one looks at the asymptotic behaviour of $u_n$ for long times, whereas zero-stability deals with a fixed integration interval, but considers $h\rightarrow 0$.\\
-In order to define absolute stability, the following, very particular IVP is introduced: 
+$h$, $u_n$ remains bounded as we let $t_n\rightarrow\infty$. In short, for absolute stability, one looks at the asymptotic behaviour of $u_n$ for long times, whereas for zero-stability one deals with a fixed integration interval, but considers $h\rightarrow 0$.\\
+In order to define absolute stability, the following, particular IVP is introduced: 
 
 \begin{align}
 \label{eqn:test-problem}
@@ -405,6 +405,7 @@ It is worth to make notice of both the fact that the coefficients $A=(a_{ij})\in
 An RK method is explicit, if each $K_i$ can be explicitly computed in terms of the coefficients $K_1,\dots ,K_{i-1}$ that have already been determined.\\
 As usual, consistency is defined by looking at the local truncation error, which in turn
 is obtained by computing the discrepancy when inserting the solution $y$ into the method.\\
+All the methods used in the present assignment happen to be RK methods.\\
 
 The following theorems, whose proof can be found in Ref.\cite{lec-notes}, are essential to characterise the properties of an RK method.\\
 
@@ -473,7 +474,7 @@ $$A=\lbrace z\in\mathbb{C}:||R(z)||<1\rbrace$$
 
 \section{The program}
 \subsection{Implementation}
-The program is built on the classes and struct that can be found in the files \emph{schemes.hh} and \emph{models.hh}, which contain the different RK method employed to find a solution and the different benchmark problem to test on, respectively.\\
+The program is built on the classes and struct that can be found in the files \emph{schemes.hh} and \emph{models.hh}, which contain the different RK methods to use and the different benchmark problem to test on, respectively.\\
 \subsubsection{schemes.hh file}
 \label{subsubsec:schemes}
 The class DIRK is made of 4 \emph{protected} variables: the matrix $A$, the vector $b$, the vector $c$ and the integer $s$ (named stages$\_$ in the code), which fully characterise the Butcher tableau of any RK method. This is done through the following instructions, which can be found in the schemes.hh file:
@@ -487,7 +488,7 @@ protected:
 \end{lstlisting}
 
 It may be worth pointing out that, even though \emph{a$\_$} represents a matrix, it is implemented as a vector in the program.\\
-The classes $FE$, $BE$, $IM$, $Heun3$ and $DIRK2$ are implemented as derived classes of $DIRK$, being that all of them represent particular instances of such a class. Their names stand respectively for: Forward Euler, Backward Euler, Implicit Midpoint, 3-stage Heun and 2-stage DIRK. The Butcher tableau of the methods can be found in the assignment instruction and will not be reported here.\\
+The classes $FE$, $BE$, $IM$, $Heun3$ and $DIRK2$ are implemented as derived classes of $DIRK$. Their names stand respectively for: Forward Euler, Backward Euler, Implicit Midpoint, 3-stage Heun and 2-stage DIRK. The Butcher tableau of the methods can be found in the assignment instruction and will not be reported here.\\
 
 
 The function \emph{evolve}, which returns the evolved approximated solution $u_{n+1}$, $u_n$ being the present approximation, can be found in the file as well. For flexibility reasons, the function is built as a \emph{template}: in this way, both methods can be accessed by the function. The prototype of the routine, is displayed in the following:
@@ -497,7 +498,7 @@ double evolve(const double &y,double t,double h,const Model &model,unsigned &cou
 \end{lstlisting}
 
 Here $y$ represents the approximated solution at the time $t$, with $h$ the chosen discretisation stepsize.\\
-In case an implicit RK method is chosen, Eqn.\ref{eqn:Ki} becomes an implicit equations for $K_i$ and has to be solved by means of numerical methods. Here, Newton's method has been employed.\\
+In case an implicit RK method is chosen, Eqn.\ref{eqn:Ki} becomes an implicit equations for $K_i$ and has to be solved by means of numerical methods. As required by the assignment instructions, Newton's method has been used.\\
 
 \begin{lstlisting}
 if( a(i,i)!=0 ) //implementing Newton's method
@@ -517,9 +518,9 @@ if( a(i,i)!=0 ) //implementing Newton's method
 	}
 \end{lstlisting}
 
-As it can be seen from the listed code above, the program checks if Eqn.\eqref{eqn:Ki} is an implicit equation for $K_i$: if the entry $a_{ii}\neq 0$, then Newton's method is implemented. The error at every iteration, which is equal to $f\left(t+hc_i, u_n+h\sum_{j=1}^{i-1}a_{ij}K_j+ha_{ii}K_i\right)$, where $f$ is the one defined in Eqn.\eqref{eqn:Ki}, is contained in the variable \emph{error} and happens to be equal to the numerator of the fraction \emph{error/den} which updates the value of $K_i$ (\emph{k$\_[i]$} in the code) at every iteration. For this reason, the same variable has been used to both store the error and construct the updating of $K_i$, making the routine more efficient.\\
-The variable \emph{tol} represent the tolerance and has been here set to $10^{-6}$: the method stops once the distance between the RHS and LHS of Eqn.\eqref{eqn:Ki} is smaller than the fixed tolerance or after a fixed number of iterations (which has been chosen to be equal to $10^6$).\\
-Finally, \emph{count} represents the number of evaluations of $f$ and the derivatives of $f$ (see $\S\ref{subsubsec:models}$). Such an evaluation is required by the assignment instructions and allows to perform a basic efficiency analysis on the different methods employed.\\ 
+As it can be seen from the listed code above, the program checks if Eqn.\eqref{eqn:Ki} is an implicit equation for $K_i$: if the entry $a_{ii}\neq 0$, then Newton's method is implemented. The error at every iteration, which is equal to $f\left(t+hc_i, u_n+h\sum_{j=1}^{i-1}a_{ij}K_j+ha_{ii}K_i\right)$, where $f$ is the one defined in Eqn.\eqref{eqn:Ki}, is contained in the variable \emph{error} and happens to be equal to the numerator of the fraction \emph{error/den} which updates the value of $K_i$ (\emph{k$\_[i]$} in the code) at every iteration. For this reason, the same variable has been used to both store the error and construct the updating of $K_i$, making the routine more efficient. The initial guess for the solution has always been chosen to be equal to naught.\\
+The variable \emph{tol} represent the tolerance and has been here set to $10^{-6}$: the method stops once the distance (in $L_\infty$ norm) between the RHS and LHS of Eqn.\eqref{eqn:Ki} is smaller than the fixed tolerance or after a fixed number of iterations (which has been chosen to be equal to $10^6$).\\
+Finally, \emph{count} represents the number of evaluations of $f$ and the derivatives of $f$ (see $\S\ref{subsubsec:models}$). Such an evaluation is required by the assignment instructions and allows to perform a basic efficiency analysis of the different methods employed.\\ 
 
 \subsubsection{models.hh file}
 \label{subsubsec:models}
@@ -532,7 +533,7 @@ struct Test
 \end{lstlisting}
 
 The stuct contains the variable \emph{modelNumber$\_$}, which allows the user to chosse between different models to test on. Such models are indexed by means of the values $1, 2$ and $3$, with an obvious correspondence with the assignment instructions. The choice of \emph{modelNumber$\_$} 3, is associated with problem \eqref{eqn:test-problem}.\\
-The other elements of \emph{Test} are $f$, $df$, $T$ and $y_0$ and \emph{exact}, which represent the function $f$ defined in each model, its derivative, the total time of integration, the starting point and the exact solution respectively. It should now be clear what the instructions \emph{model.f} and \emph{model.df} listed in $\S$\ref{subsubsec:schemes} stands for: they allow the user to compute $f$ and its first derivative at the given point (which is given by input to model).\\
+The other elements of \emph{Test} are $f$, $df$, $T$ and $y_0$ and \emph{exact}, which represent the function $f$ defined in each model, its derivative, the total time of integration, the starting point and the exact solution respectively. It should now be clear what the instructions \emph{model.f} and \emph{model.df} listed in $\S$\ref{subsubsec:schemes} stands for: they allow the user to compute $f$ and its first derivative at the given point (which is given as an argument to model).\\
 The choice between the different models is made by means of different \emph{if} instructions. As an example, one of them is reported in the following.\\
 
 \begin{lstlisting}
@@ -558,7 +559,7 @@ if(modelNumber_==1) //first assignment equation
 The above listed code defines the form of the function $f(y,t)$, i.e. the models the user can test on. It is worth pointing out that, in the event of a non correct choice of the model, the program exits with an appropriate error to the user.\\
 
 \subsubsection{main.cc file}
-The main file contains the function \emph{solve} which performs the integration of the chosen equation up to $T$. The function contains an \emph{if} instruction, which enables the printing of the approximation error over time for two different step sizes, which have been chosen to be $\tau_0=0.1$ and $\tau_0=0.05$, whenever a solution for the first model is to be obtained with these time step sizes. The files are named by means of the following instruction:
+The main file contains the function \emph{solve} which performs the integration of the chosen equation up to $T$. The function contains an \emph{if} instruction, which enables the printing of the approximation error over time for two different step sizes, which have been chosen to be $\tau_0=0.1$ and $\tau_0=0.05$, for the first model. The files are named by means of the following instruction:
 
 \begin{lstlisting}
 if( ( tau==0.1 || tau==0.05) && (model.modelNumber_ == 1) )
@@ -581,8 +582,7 @@ while ( t<=model.T() ) //up to T
 
 In case $\tau_0\neq\lbrace 0.1, 0.05\rbrace$ and the chosen model is not the first one,  the function returns the maximum error in the $L_\infty$ norm between the exact solution and the approximated one over the whole integration time $T$, as the above listed code shows.\\
 
-The program accepts 4 arguments from the prompt (here the Makefile) and, whenever an incorrect assertion of them happens, exits with an appropriate warning the user. The inserted values are then assigned to a \emph{Test} variable and to \emph{model.modelNumber$\_$}.\\
-Moreover, a vector of pointers to DIRK is constructed.\\
+The program accepts 4 arguments from the prompt (here the Makefile) and, whenever an incorrect assertion of them happens, exits with an appropriate warning the user. A vector of pointers to DIRK is constructed.\\
 
 \begin{lstlisting}
 std::vector<DIRK *> schemes;
@@ -593,7 +593,7 @@ schemes.push_back(new Heun3());
 schemes.push_back(new DIRK2());
 \end{lstlisting}
 
-By accessing to a suitable location of this vector, each of the RK methods can be employed. The \emph{experimental order of convergence} for each time step is printed on suitable files, named through the following instruction:
+By accessing a suitable location of this vector, each of the RK methods can be employed. The \emph{experimental order of convergence} (eoc) for each time step is printed on suitable files, named through the following instruction:
 
 \begin{lstlisting}
 std::ofstream myFile;
@@ -613,13 +613,13 @@ The program is run through the Makefile provided. The current optimisation is se
 The program generates a fixed number of output files, in which the results of the tests have been stored. Some of these files are used to produce plots by means of four different plotscripts.\\ 
 
 \subsection{Testing correctness}
-In order to check the correctness of the implementation of the code, the tests requested by the assignment have been performed. Test on model 1, model 2 have been performed. Nonetheless, the correctness of the code for the other class of equations is easy to verify by means of changing the parameters in the main file. Such a test, whose results will not be reported here, has been successfully performed in the construction of the code.\\
+In order to check the correctness of the implementation of the code, the tests requested by the assignment have been performed: tests on model 1 and 2 have been performed. Nonetheless, the correctness of the code for the other class of equations is easy to verify by means of changing the parameters in the main file. Such a test, whose results will not be reported here, has been successfully performed in the construction of the code.\\
 
 \subsection{Results of the tests}
 In the following, the results of the more significant tests performed will be reported and briefly discussed.\\
 
 \subsubsection{Experimental errors of convergence}
-The experimental error of convergence for each combination of models, schemes and stepsizes\footnote{In the following stepsizes will be denoted both with $h$, in accordance to the above theoretical sections, and with $\tau$, in accordance with the assignment instuctions.}, has been computed. As shown in the previous section, each scheme is indexed though the number of the corresponding location it occupies in the vector of pointers to DIRK. In particular, $0$ is associated with FE, $1$ is associated with BE, $2$ is associated with BE, $3$ is associated with IM, $4$ is associated with Heun3 and $5$ is associated with DIRK2.\\
+The experimental error of convergence for each combination of models, schemes and stepsizes\footnote{In the following, the stepsizes will be denoted both with $h$, in accordance to the above theoretical sections, and with $\tau$, in accordance with the assignment instuctions.}, has been computed. As shown in the previous section, each scheme is indexed though the number of the location it occupies in the vector of pointers to DIRK. In particular, $0$ is associated with FE, $1$ is associated with BE, $2$ is associated with BE, $3$ is associated with IM, $4$ is associated with Heun3 and $5$ is associated with DIRK2.\\
 
 
  The results are contained in the ``Errors" files, whose content is reported in the following:
@@ -780,7 +780,7 @@ Regarding the Heun3 scheme, following the same line of reasoning of the previous
 2.44141e-05              1.31991e-09              0.193087
 \end{lstlisting}
 
-It is worth noticing that the experimental order of convergence (eoc) gets close to zero or becomes negative for small enough step sizes: this behaviour is somewhat expected and signals a saturation of the method performances with the reduction of the step size. \\
+It is worth noticing that the eoc either gets close to zero or becomes negative for small enough step sizes: this behaviour is somewhat expected and signals a saturation of the method performances with the reduction of the step size. \\
 
 Finally, the results for the DIRK2 method are presented.\\
 
@@ -850,7 +850,7 @@ The approximation error, computed in the $L_\infty$ norm, has been studied as a 
 	\begin{center}
 		\includegraphics[width=0.85\textwidth]{Err_vs_t_1}
 	\end{center}
-	\caption{Graphical representation of the dependence of the approximation error on time for for model 1 and $h=0.1$.
+	\caption{Graphical representation on log-scale of the dependence of the approximation error on time for for model 1 and $h=0.1$.
 		\label{fig:Err_vs_t_0_1}}
 \end{figure}
 
@@ -858,21 +858,21 @@ The approximation error, computed in the $L_\infty$ norm, has been studied as a 
 	\begin{center}
 		\includegraphics[width=0.85\textwidth]{Err_vs_t_05}
 	\end{center}
-	\caption{Graphical representation of the dependence of the approximation error on time for for model 2 and $h=0.05$.
+	\caption{Graphical representation on log-scale of the dependence of the approximation error on time for for model 2 and $h=0.05$.
 		\label{fig:Err_vs_t_0_05}}
 \end{figure}
 
-Similar curves are observed in the plots. As expected, the error grows with time, even if, for specific time intervals, a decreasing profile is present.\\
+Similar curves are observed in the plots. As expected, the error tends to grow with time, even if, for specific time intervals, a decreasing profile is present.\\
 
 \subsubsection{Efficiency of the methods}
-A basic analysis of the performance of each of the methods is performed by means computing the number of times $f$ and $df$ are computed for each method. The results are output on the terminal so that a generic user can easily assess and verify them.\\
+A basic analysis of the performance of each of the methods is performed by means computing the number of times $f$ and $df$ are computed for each method. The results are output on the terminal so that a generic user can easily verify them.\\
 Unsurprisingly, the most performant method is the FE method. This can be understood by noticing that the method is an explicit one-stage method: usage of Newton's method is not required by the time evolution and the total number of evaluations of $f$ and $df$ is the minimum possible since no loops over $s$, $s$ being the number of stages of the method, is performed.\\
 
 \section{Conclusive remarks}
 In this section some additional comments and observation are presented.
 
 \subsection{Memory}
-As for the previous assignment, possible memory leaks have been checked.with the help of the software \emph{valgrind}, To do this, it is necessary to compile with \emph{-g} and \emph{-O1} optimisation. After having compiled the program, the following instruction has been used ():
+As for the previous assignment, possible memory leaks have been checked.with the help of the software \emph{valgrind}, To do this, it is necessary to compile with \emph{-g} and \emph{-O1} optimisation. After having compiled the program, the following instruction has been used:
 
 
 \begin{lstlisting}
@@ -911,7 +911,7 @@ for (const auto& r : (schemes)) //freeing memory
 }
 \end{lstlisting}
 
-works perfectly.\\
+which is contained in the main file, works correctly.\\
 
 \subsection{Performances}
 \label{subsec:perf}
@@ -924,7 +924,7 @@ $ kcachegrind
 where the parameters inserted from terminal have to be changed according to the desired model, scheme, initial step size and number eocs computed. In the present case the parameters refer to the case of model 1, FE scheme, $\tau_0=0.1$ and $J=12$.  
 
 The first command analyses the perfomances in the terms of load distrubution, while \emph{kcachegrind} is used to visualise the load distribution results.\\
-Unsurprisingly, the most ``time-consuming" function of the code them appears to be \emph{solve}.\\
+Unsurprisingly, the most ``time-consuming" function of the code appears to be \emph{solve}.\\
 
 
 \cleardoublepage
